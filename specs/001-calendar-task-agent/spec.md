@@ -70,7 +70,7 @@ As a user, I can connect an agent and ask questions about my calendar so I can g
 - If a user tries to save a task without a title, the system blocks the save and shows a clear validation message.
 - If a user tries to create or rename a task to a title already used on the same calendar day, the system blocks the save and prompts for a unique title.
 - If a user edits or deletes a task that was already removed in another browser tab, the system MUST reject the action, show "This task was already removed in another tab.", and refresh the task list for the selected day.
-- If the agent connection is unavailable when a user submits a question, the system shows this error message: "Calendar wizard guy is not home at the momen".
+- If the agent connection is unavailable when a user submemoved in another browser tab, the system MUST reject the action, show "This task was already removed in anits a question, the system shows this error message: "Calendar wizard guy is not home at the momen".
 - What happens when a user asks an ambiguous question, such as "What is next?", without a clear date context?
 
 ## Requirements *(mandatory)*
