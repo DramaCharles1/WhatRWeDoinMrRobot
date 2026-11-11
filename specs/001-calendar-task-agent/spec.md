@@ -67,11 +67,11 @@ As a user, I can connect an agent and ask questions about my calendar so I can g
 
 ### Edge Cases
 
-- If a user tries to save a task without a title, the system blocks the save and shows a clear validation message.
+- If a user tries to save a task without a title, the system MUST block save and show "Title is required.".
 - If a user tries to create or rename a task to a title already used on the same calendar day, the system blocks the save and prompts for a unique title.
 - If a user edits or deletes a task that was already removed in another browser tab, the system MUST reject the action, show "This task was already removed in another tab.", and refresh the task list for the selected day.
 - If the agent connection is unavailable when a user submits a question, the system shows this error message: "Calendar wizard guy is not home at the momen".
-- What happens when a user asks an ambiguous question, such as "What is next?", without a clear date context?
+- If a user asks an ambiguous question, such as "What is next?", and no selected date context exists, the system MUST return `clarification_required` and prompt for a date.
 
 ## Requirements *(mandatory)*
 
@@ -91,6 +91,11 @@ As a user, I can connect an agent and ask questions about my calendar so I can g
 - **FR-012**: The system MUST record the time of each task update for ordering and conflict handling.
 - **FR-013**: The system MUST enforce unique task titles within the same calendar day.
 - **FR-014**: The system MUST reject stale edit/delete actions for tasks removed elsewhere, show "This task was already removed in another tab.", and refresh the task list for the selected day.
+- **FR-015**: The system MUST provide operational dashboards and alerts for agent request volume, failure rate, latency, and downstream dependency health.
+- **FR-016**: The system MUST define alert thresholds and rules for agent request volume, failure rate, latency, and downstream dependency health signals.
+- **FR-017**: The system MUST include alert validation and runbook evidence before release.
+- **FR-018**: The system MUST reject empty task titles and return the user-facing message "Title is required.".
+- **FR-019**: The system MUST return `clarification_required` and a prompt to specify a date when an agent question is ambiguous and no selected date context exists.
 
 ### Key Entities *(include if feature involves data)*
 

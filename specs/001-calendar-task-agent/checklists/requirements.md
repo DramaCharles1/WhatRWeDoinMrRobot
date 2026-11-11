@@ -32,5 +32,9 @@
 ## Notes
 
 - Validation iteration 1: All checklist items passed.
+- Validation iteration 2: Added FR-015 for operational dashboards and alerts; all checklist items still pass.
+- Validation iteration 3: Added FR-016 for alert thresholds/rules; all checklist items still pass.
+- Validation iteration 4: Added FR-017 for alert validation/runbook evidence before release; all checklist items still pass.
+- Validation iteration 5: Resolved ambiguity for empty-title validation and ambiguous-date agent queries via deterministic edge cases and FR-018/FR-019; all checklist items still pass.
 - No unresolved clarifications; ready for planning.
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`

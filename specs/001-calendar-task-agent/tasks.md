@@ -11,31 +11,35 @@ description: "Task list for implementing SpeciaelFamily Calendar Task Management
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-**Purpose**: Initialize repository structure and baseline tooling for frontend, backend, and infra services.
+**Purpose**: Initialize project structure, tooling, and baseline delivery pipelines.
 
-- [ ] T001 Create backend and frontend base directories per plan in backend/, frontend/, and infra/
-- [ ] T002 Initialize Django backend dependencies and settings scaffold in backend/pyproject.toml and backend/backend/settings.py
-- [ ] T003 [P] Initialize React + TypeScript frontend scaffold in frontend/package.json and frontend/src/main.tsx
-- [ ] T004 [P] Create Docker orchestration skeleton for frontend/backend/postgres/ollama in infra/docker-compose.yml
-- [ ] T005 [P] Add manually triggered CI workflow skeleton with workflow_dispatch in .github/workflows/ci-manual.yml
+- [ ] T001 Create backend, frontend, and infra base directory structure per plan in backend/, frontend/, and infra/
+- [ ] T002 Initialize backend dependencies and project settings scaffold in backend/pyproject.toml and backend/backend/settings.py
+- [ ] T003 [P] Initialize frontend React + TypeScript scaffold in frontend/package.json and frontend/src/main.tsx
+- [ ] T004 [P] Add container orchestration baseline for frontend/backend/postgres/ollama in infra/docker-compose.yml
+- [ ] T005 [P] Add workflow_dispatch CI skeleton with backend/frontend job placeholders in .github/workflows/ci-manual.yml
+- [ ] T006 [P] Add local env template for API, database, and Ollama connectivity in .env.example
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Implement shared contracts, persistence, observability, and API wiring required before user stories.
+**Purpose**: Deliver core data, API, and observability/security foundations needed by all stories.
 
-**CRITICAL**: Complete this phase before starting user story implementation.
+**CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T006 Create Task persistence model with constraints "title: string, required, non-empty, trimmed, max length 200", "task_date: date, required (ISO date)", "creator_name: string, required, non-empty, max length 100", and "notes: string, optional, max length 2000" in backend/apps/calendar/models.py
-- [ ] T007 Add database constraints and indexes for unique "(task_date, title)", task_date index, and updated_at index in backend/apps/calendar/migrations/0001_initial.py
-- [ ] T008 [P] Implement shared API error envelope and conflict code mapping in backend/api/v1/errors.py
-- [ ] T009 [P] Configure DRF, drf-spectacular, and versioned API router at /api/v1 in backend/api/v1/urls.py and backend/backend/settings.py
-- [ ] T010 [P] Implement structured logging, correlation ID middleware, and request timing metrics in backend/services/observability.py and backend/backend/middleware.py
-- [ ] T011 Create OpenAPI alignment check and snapshot validation against specs/001-calendar-task-agent/contracts/openapi.yaml in backend/tests/contract/test_openapi_contract.py
-- [ ] T012 [P] Create shared frontend API client, typed DTOs, and error parsing for backend contracts in frontend/src/services/apiClient.ts and frontend/src/types/api.ts
+- [ ] T007 Create Task model with constraints "title: string, required, non-empty, trimmed, max length 200", "task_date: date, required (ISO date)", "creator_name: string, required, non-empty, max length 100", and "notes: string, optional, max length 2000" in backend/apps/calendar/models.py
+- [ ] T008 Add Task persistence constraints and indexes for unique "(task_date, title)", task_date index, and updated_at index in backend/apps/calendar/migrations/0001_initial.py
+- [ ] T009 [P] Implement standardized API error response envelope and code mapping in backend/api/v1/errors.py
+- [ ] T010 [P] Configure DRF, drf-spectacular, and versioned API routing under /api/v1 in backend/api/v1/urls.py and backend/backend/settings.py
+- [ ] T011 [P] Implement structured logging, correlation IDs, and request-latency metric emission in backend/services/observability.py and backend/backend/middleware.py
+- [ ] T012 [P] Add backend data-audit logging hooks for task and agent operations with retention metadata in backend/services/audit.py
+- [ ] T013 [P] Implement baseline security headers and secure cookie/session policy defaults for web/API traffic in backend/backend/security.py and backend/backend/settings.py
+- [ ] T014 [P] Create shared frontend API client with typed DTOs and deterministic error parsing in frontend/src/services/apiClient.ts and frontend/src/types/api.ts
+- [ ] T015 Create OpenAPI contract alignment test against specs/001-calendar-task-agent/contracts/openapi.yaml in backend/tests/contract/test_openapi_contract.py
+- [ ] T016 Define backend metrics registry keys for agent request volume, failure rate, latency, and dependency health in backend/services/metrics_registry.py
 
-**Checkpoint**: Foundation complete. User stories can now be implemented and tested independently.
+**Checkpoint**: Foundational baseline complete. User story phases can now proceed.
 
 ---
 
@@ -43,26 +47,28 @@ description: "Task list for implementing SpeciaelFamily Calendar Task Management
 
 **Goal**: Let users create, edit, and remove tasks for a selected calendar day with validation and stale-operation handling.
 
-**Independent Test**: From the day view, create a task with title/date/creator, edit it, then delete it; verify updates persist and stale delete/edit shows "This task was already removed in another tab." with list refresh.
+**Independent Test**: From the day view, create/edit/delete a task and verify persistence, duplicate-title blocking, stale-action handling, and exact empty-title error message "Title is required.".
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Add backend contract tests for POST /tasks, PATCH /tasks/{taskId}, and DELETE /tasks/{taskId} including 400/404/409 paths in backend/tests/contract/test_tasks_crud.py
-- [ ] T014 [P] [US1] Add backend integration tests for non-empty title, same-day duplicate title rejection, and stale operation conflict message in backend/tests/integration/test_task_crud_flows.py
-- [ ] T015 [P] [US1] Add frontend component tests for create/edit/delete task flows and validation errors in frontend/tests/component/taskEditor.spec.tsx
+- [ ] T017 [P] [US1] Add backend contract tests for POST /tasks, PATCH /tasks/{taskId}, and DELETE /tasks/{taskId} with 400/404/409 coverage in backend/tests/contract/test_tasks_crud.py
+- [ ] T018 [P] [US1] Add backend integration tests for duplicate-title rejection, stale conflict message, and no-login access in backend/tests/integration/test_task_crud_flows.py
+- [ ] T019 [P] [US1] Add backend integration test for empty title returning exact message "Title is required." in backend/tests/integration/test_task_validation_messages.py
+- [ ] T020 [P] [US1] Add frontend component tests for create/edit/delete and exact empty-title error display in frontend/tests/component/taskEditor.spec.tsx
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] Implement Task serializers with validation rules "Title must not be blank.", "(task_date, title) must be unique.", and "Creator name must be present for create operations." in backend/apps/calendar/serializers.py
-- [ ] T017 [US1] Implement task create/update/delete service with stale-operation rejection message "This task was already removed in another tab." in backend/apps/calendar/services/task_service.py
-- [ ] T018 [US1] Implement task CRUD API views for /tasks and /tasks/{taskId} responses matching openapi.yaml in backend/apps/calendar/views.py
-- [ ] T019 [US1] Wire task CRUD routes into API v1 router in backend/api/v1/urls.py
-- [ ] T020 [P] [US1] Build task form component with fields title/date/creator_name/notes and client-side required checks in frontend/src/components/TaskForm.tsx
-- [ ] T021 [P] [US1] Build task list item/editor interactions for inline update and remove actions in frontend/src/components/TaskList.tsx
-- [ ] T022 [US1] Implement frontend task CRUD service methods calling /api/v1/tasks endpoints in frontend/src/services/tasksService.ts
-- [ ] T023 [US1] Integrate optimistic refresh and stale-conflict fallback to refetch selected day after 409 in frontend/src/pages/CalendarPage.tsx
+- [ ] T021 [US1] Implement Task serializer validation rules "Title must not be blank.", "(task_date, title) must be unique.", and "Creator name must be present for create operations." in backend/apps/calendar/serializers.py
+- [ ] T022 [US1] Implement deterministic empty-title validation message "Title is required." in backend/apps/calendar/serializers.py
+- [ ] T023 [US1] Implement task create/update/delete service with stale-operation message "This task was already removed in another tab." in backend/apps/calendar/services/task_service.py
+- [ ] T024 [US1] Implement task CRUD API views for /tasks and /tasks/{taskId} matching contract responses in backend/apps/calendar/views.py
+- [ ] T025 [US1] Wire task CRUD routes into versioned router in backend/api/v1/urls.py
+- [ ] T026 [P] [US1] Build task form component with title/date/creator_name/notes fields and deterministic validation rendering in frontend/src/components/TaskForm.tsx
+- [ ] T027 [P] [US1] Build task list item interactions for edit and delete flows in frontend/src/components/TaskList.tsx
+- [ ] T028 [US1] Implement frontend task CRUD service integration with /api/v1/tasks in frontend/src/services/tasksService.ts
+- [ ] T029 [US1] Integrate selected-day refresh and 409 stale-conflict refetch handling in frontend/src/pages/CalendarPage.tsx
 
-**Checkpoint**: User Story 1 is independently functional and can be demoed as MVP.
+**Checkpoint**: US1 is independently functional and demonstrable as MVP.
 
 ---
 
@@ -74,16 +80,16 @@ description: "Task list for implementing SpeciaelFamily Calendar Task Management
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] Add backend integration tests for date-filtered list endpoint GET /tasks?date=YYYY-MM-DD in backend/tests/integration/test_task_day_listing.py
-- [ ] T025 [P] [US2] Add frontend component tests for date navigation and empty-state rendering in frontend/tests/component/calendarDayNavigation.spec.tsx
-- [ ] T026 [P] [US2] Add Playwright E2E scenario for cross-day navigation correctness in frontend/tests/e2e/calendar-navigation.spec.ts
+- [ ] T030 [P] [US2] Add backend integration tests for GET /tasks?date=YYYY-MM-DD filtering and empty list behavior in backend/tests/integration/test_task_day_listing.py
+- [ ] T031 [P] [US2] Add frontend component tests for date navigation and empty-day UI in frontend/tests/component/calendarDayNavigation.spec.tsx
+- [ ] T032 [P] [US2] Add Playwright E2E test for cross-day navigation correctness in frontend/tests/e2e/calendar-navigation.spec.ts
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implement day-filtered task list endpoint returning TaskListResponse in backend/apps/calendar/views.py
-- [ ] T028 [P] [US2] Implement calendar day selector UI with previous/next and direct date selection in frontend/src/components/DayNavigator.tsx
-- [ ] T029 [US2] Integrate selected-date state management and day list fetching in frontend/src/pages/CalendarPage.tsx
-- [ ] T030 [US2] Add explicit no-task state "No tasks scheduled" for empty day responses in frontend/src/components/TaskListEmptyState.tsx
+- [ ] T033 [US2] Implement day-filtered task list endpoint returning TaskListResponse in backend/apps/calendar/views.py
+- [ ] T034 [P] [US2] Implement day selector UI with previous/next and date picking in frontend/src/components/DayNavigator.tsx
+- [ ] T035 [US2] Integrate selected-date state and day-list fetch orchestration in frontend/src/pages/CalendarPage.tsx
+- [ ] T036 [US2] Add explicit empty-day state "No tasks scheduled" in frontend/src/components/TaskListEmptyState.tsx
 
 **Checkpoint**: User Stories 1 and 2 both function independently and together.
 
@@ -97,19 +103,20 @@ description: "Task list for implementing SpeciaelFamily Calendar Task Management
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Add contract tests for POST /agent/session and POST /agent/query including 422 and 503 responses in backend/tests/contract/test_agent_endpoints.py
-- [ ] T032 [P] [US3] Add integration tests for ambiguity handling, selected-day default context, and unavailable-agent error text in backend/tests/integration/test_agent_query_flows.py
-- [ ] T033 [P] [US3] Add frontend component tests for agent connect, ask, answer, clarification, and unavailable error rendering in frontend/tests/component/agentPanel.spec.tsx
+- [ ] T037 [P] [US3] Add contract tests for POST /agent/session and POST /agent/query including 422 and 503 paths in backend/tests/contract/test_agent_endpoints.py
+- [ ] T038 [P] [US3] Add integration tests for ambiguous-question clarification_required behavior when selected_date_context is missing in backend/tests/integration/test_agent_query_flows.py
+- [ ] T039 [P] [US3] Add integration tests for unavailable-agent message and selected-day context behavior in backend/tests/integration/test_agent_query_unavailable.py
+- [ ] T040 [P] [US3] Add frontend component tests for connect/ask/answer/clarification and unavailable errors in frontend/tests/component/agentPanel.spec.tsx
 
 ### Implementation for User Story 3
 
-- [ ] T034 [US3] Implement AgentSession and AgentQuery models with status enums and timestamps in backend/apps/agent/models.py
-- [ ] T035 [US3] Implement Ollama gateway with timeout/retry/fallback behavior and structured error metadata in backend/services/ollama_client.py
-- [ ] T036 [US3] Implement agent session creation API and availability checks for /agent/session in backend/apps/agent/views.py
-- [ ] T037 [US3] Implement /agent/query pipeline that uses selected day context and returns clarification_required for ambiguous questions without date context in backend/apps/agent/services/query_service.py
-- [ ] T038 [US3] Ensure unavailable agent response message is exactly "Calendar wizard guy is not home at the momen" in backend/apps/agent/views.py
-- [ ] T039 [P] [US3] Build frontend agent panel UI for connect, question entry, response display, and clarification prompt in frontend/src/components/AgentPanel.tsx
-- [ ] T040 [US3] Integrate agent panel with calendar selected day context and backend endpoints in frontend/src/pages/CalendarPage.tsx
+- [ ] T041 [US3] Implement AgentSession and AgentQuery persistence models with enum statuses and timestamps in backend/apps/agent/models.py
+- [ ] T042 [US3] Implement Ollama gateway with timeout, retry, and fallback behavior in backend/services/ollama_client.py
+- [ ] T043 [US3] Implement agent session creation endpoint and availability checks for /agent/session in backend/apps/agent/views.py
+- [ ] T044 [US3] Implement /agent/query service returning `clarification_required` and date prompt for ambiguous no-context questions in backend/apps/agent/services/query_service.py
+- [ ] T045 [US3] Ensure unavailable-agent response message is exactly "Calendar wizard guy is not home at the momen" in backend/apps/agent/views.py
+- [ ] T046 [P] [US3] Build frontend agent panel for connect, question input, response display, and clarification prompt rendering in frontend/src/components/AgentPanel.tsx
+- [ ] T047 [US3] Integrate agent panel with selected-date context and backend APIs in frontend/src/pages/CalendarPage.tsx
 
 **Checkpoint**: All three user stories are independently testable and complete.
 
@@ -119,10 +126,15 @@ description: "Task list for implementing SpeciaelFamily Calendar Task Management
 
 **Purpose**: Final quality, documentation, and release-readiness updates spanning multiple stories.
 
-- [ ] T041 [P] Update README and feature docs with local run, API docs, and agent behavior notes in README.md and specs/001-calendar-task-agent/quickstart.md
-- [ ] T042 Add CI jobs for backend/frontend lint, tests, Playwright, and line+branch coverage artifacts in .github/workflows/ci-manual.yml
-- [ ] T043 [P] Add contract drift guard that fails CI on OpenAPI mismatch with specs/001-calendar-task-agent/contracts/openapi.yaml in backend/tests/contract/test_openapi_contract.py
-- [ ] T044 Run and document quickstart validation scenarios including stale conflict and agent unavailable behavior in specs/001-calendar-task-agent/quickstart.md
+- [ ] T048 [P] Define operational dashboard configuration for agent request volume, failure rate, latency, and downstream dependency health in infra/observability/agent-dashboard.json
+- [ ] T049 [P] Define alert thresholds and rule configuration for agent observability signals in infra/observability/agent-alerts.yml
+- [ ] T050 Add automated alert validation scenarios for trigger and recovery paths in backend/tests/integration/test_alert_validation.py
+- [ ] T051 [P] Add release runbook documenting alert validation evidence and operator actions in docs/operations/agent-alert-runbook.md
+- [ ] T052 Add CI step to collect and publish alert validation/runbook evidence artifacts in .github/workflows/ci-manual.yml
+- [ ] T053 [P] Add performance verification test for SC-003 (99% of successful task saves visible within 2 seconds) in backend/tests/integration/test_task_save_latency.py
+- [ ] T054 [P] Add agent answer-quality evaluation harness for SC-004 in backend/tests/integration/test_agent_answer_quality.py
+- [ ] T055 [P] Update README and quickstart with deterministic validation and clarification-required behaviors in README.md and specs/001-calendar-task-agent/quickstart.md
+- [ ] T056 Add OpenAPI contract drift guard in CI for specs/001-calendar-task-agent/contracts/openapi.yaml in backend/tests/contract/test_openapi_contract.py
 
 ---
 
@@ -150,22 +162,23 @@ description: "Task list for implementing SpeciaelFamily Calendar Task Management
 
 ## Parallel Opportunities
 
-- Setup: T003, T004, T005 can run in parallel after T001/T002 starts structure.
-- Foundational: T008, T009, T010, T012 can run in parallel once model baseline (T006/T007) is in place.
-- US1: T013-T015 can run in parallel; T020 and T021 can run in parallel; backend (T016-T019) and frontend (T020-T023) streams can proceed concurrently.
-- US2: T024-T026 parallelize tests; T028 can run in parallel with T027 before integration in T029.
-- US3: T031-T033 parallelize tests; T039 can run in parallel with backend service/API implementation T034-T038.
+- Setup: T003, T004, T005, T006 can run in parallel after T001/T002.
+- Foundational: T009, T010, T011, T012, T013, T014 can run in parallel after T007/T008.
+- US1: T017-T020 can run in parallel; T026 and T027 can run in parallel; backend and frontend streams can proceed concurrently.
+- US2: T030-T032 can run in parallel; T034 can run in parallel with T033 before integration in T035.
+- US3: T037-T040 can run in parallel; T046 can run in parallel with backend implementation T041-T045.
+- Polish: T048, T049, T051, T053, T054, T055 can run in parallel before final CI integration tasks T052/T056.
 
 ## Parallel Example: User Story 1
 
 ```bash
 # Parallel backend/frontend test authoring
-Task: "T013 [US1] contract tests in backend/tests/contract/test_tasks_crud.py"
-Task: "T015 [US1] component tests in frontend/tests/component/taskEditor.spec.tsx"
+Task: "T017 [US1] contract tests in backend/tests/contract/test_tasks_crud.py"
+Task: "T020 [US1] component tests in frontend/tests/component/taskEditor.spec.tsx"
 
 # Parallel UI components
-Task: "T020 [US1] TaskForm in frontend/src/components/TaskForm.tsx"
-Task: "T021 [US1] TaskList interactions in frontend/src/components/TaskList.tsx"
+Task: "T026 [US1] TaskForm in frontend/src/components/TaskForm.tsx"
+Task: "T027 [US1] TaskList interactions in frontend/src/components/TaskList.tsx"
 ```
 
 ---
@@ -200,4 +213,6 @@ Task: "T021 [US1] TaskList interactions in frontend/src/components/TaskList.tsx"
 
 - All tasks use required checklist format: `- [ ] T### [P] [US#] Description with file path`.
 - `[US#]` labels are only applied to user story phases.
-- Field constraints from data-model.md are preserved in implementation tasks to avoid ambiguity.
+- Field constraints from data-model.md are preserved verbatim in model tasks to avoid ambiguity.
+- FR-015 through FR-017 are covered by dashboard, alert-rule, validation, and runbook tasks in Phase 6.
+- FR-018 and FR-019 are covered by deterministic validation and clarification-required tests and implementation tasks in Phases 3 and 5.
