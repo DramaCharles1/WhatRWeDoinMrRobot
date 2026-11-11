@@ -1,0 +1,35 @@
+name: Manual CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate OpenAPI contract drift guard
+        run: |
+          test -f specs/001-calendar-task-agent/contracts/openapi.yaml
+          grep -q "/tasks:" specs/001-calendar-task-agent/contracts/openapi.yaml
+          grep -q "/agent/query:" specs/001-calendar-task-agent/contracts/openapi.yaml
+      - name: Backend placeholder tests
+        run: echo "Run backend unit/integration/contract tests here"
+      - name: Collect backend evidence artifacts
+        run: |
+          mkdir -p artifacts
+          cp specs/001-calendar-task-agent/contracts/openapi.yaml artifacts/openapi.yaml
+          cp infra/observability/agent-alerts.yml artifacts/agent-alerts.yml
+          cp docs/operations/agent-alert-runbook.md artifacts/agent-alert-runbook.md
+      - name: Upload backend evidence artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-evidence
+          path: artifacts/
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Frontend placeholder tests
+        run: echo "Run frontend unit/component/e2e tests here"

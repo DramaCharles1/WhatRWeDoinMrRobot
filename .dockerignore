@@ -1,0 +1,16 @@
+# Source control and metadata
+.git/
+.dockerignore
+
+# Dependencies and build outputs
+node_modules/
+dist/
+build/
+coverage/
+
+# Logs and local env
+*.log*
+.env*
+
+# Docker definitions
+Dockerfile*

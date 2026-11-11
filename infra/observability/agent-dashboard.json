@@ -1,0 +1,25 @@
+{
+  "title": "Agent Operations Dashboard",
+  "panels": [
+    {
+      "id": "request_volume",
+      "title": "Agent Request Volume",
+      "metric": "agent.request.volume"
+    },
+    {
+      "id": "failure_rate",
+      "title": "Agent Failure Rate",
+      "metric": "agent.failure.rate"
+    },
+    {
+      "id": "latency",
+      "title": "Agent Latency (ms)",
+      "metric": "agent.latency.ms"
+    },
+    {
+      "id": "dependency_health",
+      "title": "Dependency Health",
+      "metric": "dependency.health"
+    }
+  ]
+}

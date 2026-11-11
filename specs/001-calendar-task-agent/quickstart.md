@@ -71,10 +71,13 @@ Expected outcome:
 
 1. Create task with valid title/date/creator -> expect success.
 2. Create task with empty title -> expect validation error.
+    - Expected exact message: `Title is required.`
 3. Create duplicate same-day title -> expect conflict error.
 4. Delete a task in one tab, then update from another tab -> expect stale conflict message and list refresh behavior.
+    - Expected stale message: `This task was already removed in another tab.`
 5. Stop or disconnect Ollama, submit agent question -> expect error message: `Calendar wizard guy is not home at the momen`.
 6. Ask ambiguous question without date context -> expect clarification prompt when no selected day context exists.
+    - Expected clarification code: `clarification_required`
 
 ## Test Pyramid Execution
 
