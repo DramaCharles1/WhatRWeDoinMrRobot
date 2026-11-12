@@ -8,6 +8,18 @@
 
 **Input**: User description: "Create a minimal home calendar application. The app should let a user quickly view a calendar, create events, edit them, and remove them. The interface should stay simple and easy to use. Keep the first version small and focused on essential date planning needs. No login, no automation, no extra platform features."
 
+## Clarifications
+
+### Session 2026-11-12
+
+- Q: Which validation contract should the spec adopt for create/edit event fields to close the CHK001 completeness gap? -> A: Explicit MVP contract: title required and trimmed with max length 200; details optional with max length 2000; date format `YYYY-MM-DD`; timed events use `HH:MM` 24-hour local time; edit enforces the same validation rules as create.
+- Q: Should FR-010 be rewritten with measurable UI clarity criteria so "simple" is no longer subjective? -> A: Keep FR-010 qualitative only.
+- Q: Should the spec require deterministic validation message text for both required title and invalid timed range cases? -> A: Require exact canonical messages for both cases.
+- Q: Which measurement protocol should the spec adopt for SC-001 to SC-003 so the thresholds are objectively verifiable without hidden assumptions? -> A: Add protocol measured on localhost, sample size n>=20 per flow, timing starts at submit action, timing ends when update is visible in selected day view, and SC-003 includes successful save/update attempts only.
+- Q: How should acceptance scenarios be mapped to requirement IDs to satisfy traceability for CHK008? -> A: Add `Maps to:` requirement ID tags beneath each acceptance scenario.
+- Q: What recovery behavior should be required when create/update/delete fails so users can continue safely without losing context? -> A: Require only a clear error message; no retained inputs, retry control, or reconciliation behavior is required.
+- Q: Which minimum non-functional requirement set should the MVP spec include to make accessibility and responsiveness explicit and testable? -> A: Keep current spec as-is and rely on Constitution Principle I only.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - View the Calendar (Priority: P1)
@@ -21,8 +33,11 @@ As a user, I can open the calendar and see the schedule for a chosen date so I c
 **Acceptance Scenarios**:
 
 1. **Given** the user opens the calendar, **When** they select a date, **Then** the app shows the events scheduled for that date.
+	Maps to: FR-002, FR-006
 2. **Given** no events are scheduled for a selected date, **When** the date is opened, **Then** the app shows a clear empty state.
+	Maps to: FR-007
 3. **Given** the user moves between dates, **When** they choose another day, **Then** the visible events update to match the newly selected date.
+	Maps to: FR-002, FR-006
 
 ---
 
@@ -37,8 +52,11 @@ As a user, I can create and update simple calendar events so I can keep my sched
 **Acceptance Scenarios**:
 
 1. **Given** the user is viewing a date, **When** they create an event with a title and either (a) start and end times or (b) all-day selected, **Then** the event is added to the selected day.
+	Maps to: FR-003, FR-015
 2. **Given** an existing event is visible, **When** the user edits its title, time settings, or details, **Then** the updated event replaces the previous version.
+	Maps to: FR-004, FR-020
 3. **Given** a user tries to save an event without a title, **When** they submit the form, **Then** the save is blocked and a clear validation message appears.
+	Maps to: FR-008, FR-021
 
 ---
 
@@ -53,20 +71,23 @@ As a user, I can delete an event when it is no longer needed so the calendar sta
 **Acceptance Scenarios**:
 
 1. **Given** an event exists in the calendar, **When** the user deletes it, **Then** it disappears from the selected day view.
+	Maps to: FR-005
 2. **Given** the user deletes an event, **When** the calendar refreshes, **Then** the remaining events are displayed without the removed item.
+	Maps to: FR-005, FR-012
 
 ---
 
 ### Edge Cases
 
-- If a user submits an event with no title, the app MUST block the save and show a clear validation message.
+- If a user submits an event with no title (or only whitespace), the app MUST block the save and show the exact message `Title is required.`.
 - The app MUST allow duplicate event titles on the same day.
-- If an event is not marked all-day, the app MUST require both start time and end time, and the end time MUST be later than the start time.
+- If an event is not marked all-day, the app MUST require both start time and end time, the end time MUST be later than the start time, and when invalid it MUST show the exact message `End time must be later than start time.`.
 - If an event is marked all-day, it MUST apply to exactly one selected date, and start/end time fields MUST be hidden in the form.
 - In day view ordering, all-day events MUST appear before timed events.
 - If multiple timed events have the same start time, they MUST be ordered by creation order.
 - If the selected date has no events, the app MUST show an empty-state message instead of a blank area.
 - If the user leaves the form without saving, the app MUST keep the calendar state unchanged.
+- If create, update, or delete fails, the app MUST show a clear operation-specific error message; no additional recovery behavior is required in MVP.
 
 ## Requirements *(mandatory)*
 
@@ -84,16 +105,24 @@ As a user, I can delete an event when it is no longer needed so the calendar sta
 - **FR-007**: The system MUST show a clear empty state when a selected day has no events.
 - **FR-008**: The system MUST require a user to provide a title before saving a new or edited event.
 - **FR-009**: The system MUST support a simple user flow for creating, editing, and deleting events without login or account setup.
-- **FR-010**: The system MUST keep the interface simple, with easy-to-understand controls for date selection and event management.
+- **FR-010**: The system MUST keep the interface simple, with easy-to-understand controls for date selection and event management. For MVP, this requirement is intentionally qualitative and evaluated alongside SC-004 usability outcomes.
 - **FR-011**: The system MUST keep the feature set limited to essential calendar planning for the first release.
 - **FR-012**: The system MUST persist created, edited, and deleted events so calendar data remains consistent after page refreshes and application restarts.
 - **FR-013**: The system MUST validate that non-all-day events have an end time later than the start time.
 - **FR-014**: The system MUST allow duplicate event titles on the same day.
 - **FR-015**: The system MUST treat all-day events as single-day events and hide start/end time inputs when all-day is selected.
+- **FR-016**: The system MUST trim leading and trailing whitespace from event titles and enforce a maximum title length of 200 characters for create and edit operations.
+- **FR-017**: The system MUST treat event details as optional and enforce a maximum details length of 2000 characters for create and edit operations.
+- **FR-018**: The system MUST require event dates in ISO format `YYYY-MM-DD` for create and edit operations.
+- **FR-019**: The system MUST require timed event start and end values in `HH:MM` 24-hour format interpreted in local calendar time.
+- **FR-020**: The system MUST apply identical validation rules for create and edit operations across title, date, timed/all-day mode, and details fields.
+- **FR-021**: When title validation fails because the submitted value is empty after trimming, the system MUST return the exact validation message `Title is required.`.
+- **FR-022**: When timed-event validation fails because `end_time` is not later than `start_time`, the system MUST return the exact validation message `End time must be later than start time.`.
+- **FR-023**: When create, update, or delete operations fail, the system MUST return a clear operation-specific error message. No additional recovery requirements (input retention, retry action, or automatic reconcile) are mandated for MVP.
 
 ### Key Entities *(include if feature involves data)*
 
-- **Event**: A scheduled item with a title, date, and either (a) start and end times or (b) an all-day marker for exactly one date, plus optional notes or details.
+- **Event**: A scheduled item with a required title (trimmed, max 200), a required date in `YYYY-MM-DD` format, and either (a) start and end times in `HH:MM` 24-hour local time or (b) an all-day marker for exactly one date, plus optional details (max 2000).
 - **Calendar Day**: A selected date containing zero or more scheduled events.
 - **User**: A local user of the application, with no account system required for the MVP.
 
@@ -105,6 +134,13 @@ As a user, I can delete an event when it is no longer needed so the calendar sta
 - **SC-002**: Users can edit or delete an event in under 30 seconds once it is visible on the page.
 - **SC-003**: 95% of tested event saves and updates are reflected in the selected day view without a page refresh.
 - **SC-004**: 90% of users can complete a basic event-creation flow without needing instructions or help.
+
+### Measurement Protocol
+
+- SC-001 to SC-003 measurements MUST be captured in localhost test runs.
+- For each measured flow, sample size MUST be at least 20 attempts (`n>=20`).
+- For SC-001 and SC-002 timing, measurement MUST start at user submit action and end when the resulting update is visible in the selected day view.
+- For SC-003, the denominator MUST include only successful save/update attempts.
 
 ## Assumptions
 
