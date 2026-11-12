@@ -1,58 +1,64 @@
-# Implementation Plan: SpeciaelFamily Calendar Task Management
+# Implementation Plan: Simple Home Calendar MVP
 
-**Branch**: `001-calendar-task-agent` | **Date**: 2026-11-11 | **Spec**: `specs/001-calendar-task-agent/spec.md`
+**Branch**: `001-calendar-task-agent` | **Date**: 2026-11-12 | **Spec**: `specs/001-calendar-task-agent/spec.md`
 
 **Input**: Feature specification from `specs/001-calendar-task-agent/spec.md`
 
-**Note**: This template is filled in by the `/speckit-plan` command; its definition describes the execution workflow.
-
 ## Summary
 
-Build a containerized calendar web app with React frontend, Django REST backend, PostgreSQL
-storage, and backend-mediated Ollama agent integration. The design is contract-first with OpenAPI
-and Swagger docs, and quality is enforced through a conventional test pyramid plus line/branch
-coverage reporting in a manually triggered CI pipeline.
+Deliver a minimal home calendar using a straightforward client-server architecture: a React +
+TypeScript frontend, a Django REST Framework backend, and a PostgreSQL database. Scope is limited
+to essential planning: choose a day, list its events, create/edit/delete events (timed or
+all-day), deterministic ordering, and persistence. No login, no automation, and no agent features.
+The frontend talks to the backend exclusively through a REST API and never to the database.
 
 ## Technical Context
 
-**Language/Version**: Python 3.12 (backend), TypeScript 5.x + Node.js 20 LTS (frontend)
+**Language/Version**: Python 3.12 (backend), TypeScript 5.x strict mode + Node.js 20 LTS (frontend)
 
-**Primary Dependencies**: Django 5, Django REST Framework, drf-spectacular, psycopg, React 18,
-Vitest, React Testing Library, pytest, pytest-django, Playwright
+**Primary Dependencies**:
+- Frontend: React, TypeScript, Vite, React Router, ESLint, Prettier, Vitest, React Testing Library
+- Backend: Django, Django REST Framework, Ruff, mypy, pytest, pytest-django, coverage.py
 
-**Storage**: PostgreSQL 16
+**Storage**: PostgreSQL (accessed only by the backend through the Django ORM)
 
-**Testing**: Unit (pytest, Vitest), component (React Testing Library), integration (pytest + DRF +
-PostgreSQL), E2E (Playwright), coverage (line + branch)
+**Testing**: Vitest + React Testing Library (frontend unit/component); pytest + pytest-django
+(backend unit, integration, API contract); coverage.py for backend coverage
 
-**Target Platform**: Linux containers via Docker and Docker Compose
+**Target Platform**: Localhost / local network; desktop, tablet, and mobile browsers
 
-**Project Type**: Web application (frontend + backend + local LLM integration)
+**Project Type**: Web application (frontend + backend + database)
 
-**Performance Goals**: Match spec outcomes, including 99% of successful task saves visible within
-2 seconds and usability timing goals in success criteria
+**Performance Goals**: Meet spec success criteria SC-001 to SC-004 (fast create/edit/delete and
+in-place updates without page refresh)
 
-**Constraints**: No login in v1, REST-only communication, OpenAPI + Swagger docs, local Ollama
-models, containerized runtime, deterministic handling of stale and unavailable agent operations
+**Constraints**:
+- REST-only communication between frontend and backend; no direct database access from frontend
+- Backend API base URL configured through frontend environment variables
+- Simple state management (React state/hooks only); no extra state libraries
+- Loading, error, and empty states in all data-driven views
+- No authentication; not exposed to the public internet
 
-**Scale/Scope**: Single shared calendar context; daily task CRUD + agent Q&A; one frontend app,
-one backend API, one PostgreSQL service, one Ollama service
+**Scale/Scope**: One shared home calendar; single entity (Event); one frontend app, one backend API,
+one database
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 Pre-Design Gate Review:
-- Principle I (User-First Calendar Experience): PASS
-- Principle II (Backend-Defined Agent Contracts): PASS
-- Principle III (Testable Agent Workflows): PASS
-- Principle IV (Reliable Integrations and Observability): PASS (implementation must emit structured
-  logs and latency/error metrics)
-- Principle V (Security and Data Boundaries): PASS (backend remains policy and validation boundary)
+- Principle I (User-First Calendar Experience): PASS. Responsive, minimal day-view workflow.
+- Principle II (Simple, Backend-Defined Data Contracts): PASS. Versioned REST contract owned by
+  the backend; frontend uses it exclusively.
+- Principle III (Testable Task Workflows): PASS. Create/edit/delete/list, validation, and ordering
+  are covered by automated tests at backend and frontend levels.
+- Principle IV (Reliable Integrations and Observability): PASS. Basic structured logs, clear error
+  messages, and a health endpoint; no dashboards required.
+- Principle V (Security and Data Boundaries): PASS. Local-only deployment, no sensitive data.
 
 Post-Design Gate Review:
-- PASS. Research, data model, API contract, and quickstart define enforceable interfaces,
-  validations, observability, and test requirements aligned with the constitution.
+- PASS. Research, data model, API contract, and quickstart stay within MVP scope and satisfy the
+  constitution (documented setup, documented testing, enforced quality tooling).
 
 ## Project Structure
 
@@ -74,11 +80,9 @@ specs/001-calendar-task-agent/
 ```text
 backend/
 ├── apps/
-│   ├── calendar/
-│   └── agent/
+│   └── calendar/        # models, serializers, views, event ordering logic
 ├── api/
-│   └── v1/
-├── services/
+│   └── v1/              # URL routing and error handling
 ├── tests/
 │   ├── unit/
 │   ├── integration/
@@ -87,25 +91,22 @@ backend/
 
 frontend/
 ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── services/
+│   ├── components/      # reusable UI pieces
+│   ├── pages/           # application-specific pages (calendar page)
+│   ├── services/        # REST API client
 │   └── types/
 └── tests/
     ├── unit/
-    ├── component/
-    └── e2e/
+    └── component/
 
 infra/
-├── docker-compose.yml
-└── Dockerfiles/
-
-.github/workflows/
-└── ci-manual.yml
+└── docker-compose.yml   # optional local PostgreSQL / full-stack startup
 ```
 
-**Structure Decision**: Web application split into `frontend/` and `backend/`, with API contracts
-in `specs/.../contracts/` and container/CI orchestration in `infra/` and `.github/workflows/`.
+**Structure Decision**: Keep the existing frontend/backend split. The agent app, agent endpoints,
+Ollama client, observability dashboards, and alert assets are out of scope and are to be removed
+during implementation. Reusable components are separated from application-specific pages.
+
 
 ## Complexity Tracking
 
