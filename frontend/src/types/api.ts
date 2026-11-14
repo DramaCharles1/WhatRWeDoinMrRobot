@@ -4,31 +4,30 @@ export type ApiError = {
   details?: Record<string, unknown>;
 };
 
-export type TaskDto = {
+export type EventDto = {
   id: string;
   title: string;
-  task_date: string;
-  creator_name: string;
-  notes?: string;
+  event_date: string;
+  is_all_day: boolean;
+  start_time: string | null;
+  end_time: string | null;
+  notes: string;
   created_at: string;
   updated_at: string;
 };
 
-export type TaskListResponse = {
+export type EventListResponse = {
   date: string;
-  tasks: TaskDto[];
+  events: EventDto[];
 };
 
-export type AgentSessionDto = {
-  session_id: string;
-  status: "active" | "unavailable" | "closed";
-  started_at: string;
+export type EventWriteRequest = {
+  title: string;
+  event_date: string;
+  is_all_day: boolean;
+  start_time?: string | null;
+  end_time?: string | null;
+  notes?: string;
 };
 
-export type AgentQueryResponseDto = {
-  query_id: string;
-  status: "answered" | "clarification_required" | "error";
-  response_text?: string;
-  clarification_prompt?: string;
-  error_message?: string;
-};
+export type EventUpdateRequest = Partial<EventWriteRequest>;

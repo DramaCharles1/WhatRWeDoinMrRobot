@@ -6,30 +6,67 @@ on:
 jobs:
   backend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: calendar
+          POSTGRES_USER: calendar
+          POSTGRES_PASSWORD: calendar
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U calendar -d calendar"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      - name: Validate OpenAPI contract drift guard
-        run: |
-          test -f specs/001-calendar-task-agent/contracts/openapi.yaml
-          grep -q "/tasks:" specs/001-calendar-task-agent/contracts/openapi.yaml
-          grep -q "/agent/query:" specs/001-calendar-task-agent/contracts/openapi.yaml
-      - name: Backend placeholder tests
-        run: echo "Run backend unit/integration/contract tests here"
-      - name: Collect backend evidence artifacts
-        run: |
-          mkdir -p artifacts
-          cp specs/001-calendar-task-agent/contracts/openapi.yaml artifacts/openapi.yaml
-          cp infra/observability/agent-alerts.yml artifacts/agent-alerts.yml
-          cp docs/operations/agent-alert-runbook.md artifacts/agent-alert-runbook.md
-      - name: Upload backend evidence artifacts
-        uses: actions/upload-artifact@v4
+      - uses: actions/setup-python@v5
         with:
-          name: backend-evidence
-          path: artifacts/
+          python-version: "3.12"
+
+      - name: Install backend dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Backend quality gates
+        env:
+          DJANGO_DEBUG: "true"
+          DB_NAME: calendar
+          DB_USER: calendar
+          DB_PASSWORD: calendar
+          DB_HOST: 127.0.0.1
+          DB_PORT: "5432"
+        run: |
+          ruff check .
+          mypy .
+          python manage.py check
+          pytest tests/unit tests/contract tests/integration
 
   frontend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-      - name: Frontend placeholder tests
-        run: echo "Run frontend unit/component/e2e tests here"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Frontend quality gates
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run build
+          npm run test:component

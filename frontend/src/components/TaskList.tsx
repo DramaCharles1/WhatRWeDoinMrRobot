@@ -1,21 +1,34 @@
-import type { TaskDto } from "../types/api";
+import type { EventDto } from "../types/api";
 
 type Props = {
-  tasks: TaskDto[];
-  onEdit: (task: TaskDto) => void;
+  tasks: EventDto[];
+  onEdit: (task: EventDto) => void;
   onDelete: (taskId: string) => Promise<void>;
 };
 
 export function TaskList({ tasks, onEdit, onDelete }: Props) {
   return (
-    <ul>
+    <ul className="event-list" aria-label="event-list">
       {tasks.map((task) => (
-        <li key={task.id}>
+        <li key={task.id} className="event-list-item">
           <strong>{task.title}</strong>
-          <button onClick={() => onEdit(task)} type="button">
+          <p>
+            {task.is_all_day ? "All day" : `${task.start_time ?? ""} - ${task.end_time ?? ""}`}
+          </p>
+          <button
+            className="focus-ring"
+            aria-label={`edit-${task.id}`}
+            onClick={() => onEdit(task)}
+            type="button"
+          >
             Edit
           </button>
-          <button onClick={() => onDelete(task.id)} type="button">
+          <button
+            className="focus-ring"
+            aria-label={`delete-${task.id}`}
+            onClick={() => onDelete(task.id)}
+            type="button"
+          >
             Delete
           </button>
         </li>

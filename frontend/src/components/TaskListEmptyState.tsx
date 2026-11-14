@@ -1,3 +1,3 @@
 export function TaskListEmptyState() {
-  return <p>No tasks scheduled</p>;
+  return <p>No events scheduled for this day.</p>;
 }

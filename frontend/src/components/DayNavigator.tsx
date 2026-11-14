@@ -11,17 +11,30 @@ function shiftDate(isoDate: string, days: number): string {
 
 export function DayNavigator({ selectedDate, onChange }: Props) {
   return (
-    <section>
-      <button type="button" onClick={() => onChange(shiftDate(selectedDate, -1))}>
+    <section aria-label="day-navigation" className="day-nav">
+      <button
+        className="focus-ring"
+        type="button"
+        onClick={() => onChange(shiftDate(selectedDate, -1))}
+      >
         Previous day
       </button>
+      <label htmlFor="selected-day-input" className="field-label">
+        Selected day
+      </label>
       <input
+        id="selected-day-input"
+        className="focus-ring"
         aria-label="selected-day"
         type="date"
         value={selectedDate}
         onChange={(event) => onChange(event.target.value)}
       />
-      <button type="button" onClick={() => onChange(shiftDate(selectedDate, 1))}>
+      <button
+        className="focus-ring"
+        type="button"
+        onClick={() => onChange(shiftDate(selectedDate, 1))}
+      >
         Next day
       </button>
     </section>

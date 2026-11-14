@@ -5,8 +5,8 @@
     "moduleResolution": "Bundler",
     "jsx": "react-jsx",
     "strict": true,
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals", "vite/client"],
     "skipLibCheck": true
   },
-  "include": ["src", "tests"]
+  "include": ["src", "tests/component", "tests/unit"]
 }

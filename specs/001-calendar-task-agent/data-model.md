@@ -1,77 +1,55 @@
-# Data Model: SpeciaelFamily Calendar Task Management
+# Data Model: Simple Home Calendar MVP
 
-## Entity: Task
+## Entity: Event
 
-Purpose: Represents a calendar task on a specific day in a shared, login-free calendar context.
+Purpose: A single calendar item on one date, either all-day or with a start and end time.
 
 Fields:
-- `id`: UUID, immutable
-- `title`: string, required, non-empty, trimmed, max length 200
-- `task_date`: date, required (ISO date)
-- `creator_name`: string, required, non-empty, max length 100
-- `notes`: string, optional, max length 2000
-- `created_at`: datetime (UTC), system-generated
-- `updated_at`: datetime (UTC), system-generated
+- `id`: UUID, immutable, system-generated
+- `title`: string, required, trimmed, non-empty, max length 200
+- `event_date`: date, required (ISO `YYYY-MM-DD`)
+- `is_all_day`: boolean, required, default `false`
+- `start_time`: time, nullable (required when `is_all_day` is `false`)
+- `end_time`: time, nullable (required when `is_all_day` is `false`)
+- `notes`: string, optional, max length 2000, default empty
+- `created_at`: datetime (UTC), system-generated, never changes after creation
+- `updated_at`: datetime (UTC), system-generated, updated on every save
 
 Validation Rules:
-- Title must not be blank.
-- `(task_date, title)` must be unique.
-- Creator name must be present for create operations.
+- Title must not be blank (FR-008). User-facing message: `Title is required.`
+- If `is_all_day` is `true`: `start_time` and `end_time` MUST be empty (they are hidden in the UI
+  and cleared on save) (FR-015).
+- If `is_all_day` is `false`: `start_time` and `end_time` are both required and `end_time` MUST be
+  later than `start_time` (FR-013).
+- Events never span multiple dates; one `event_date` per event.
+- Duplicate titles on the same date are allowed (FR-014); no uniqueness constraint.
 
 State/Transition Notes:
-- Created -> Updated -> Deleted
-- Update/delete requests against missing tasks are rejected as stale operations with user-facing
-  message: `This task was already removed in another tab.`
+- Created -> Updated (any number of times) -> Deleted.
+- Editing an event never changes `created_at`, so creation-order tie-breaking stays stable.
+- Deleted events are permanently removed (no soft delete in MVP).
 
-## Entity: CalendarDay
+## Read Model: Calendar Day
 
-Purpose: Read model for all tasks assigned to a selected date.
+Purpose: The ordered list of events for a selected date.
 
 Fields:
 - `date`: date
-- `tasks`: ordered collection of Task summaries
+- `events`: ordered list of Event
 
-Validation Rules:
-- Returns empty `tasks` when no entries exist for the selected day.
+Ordering (FR-006a/b/c), applied by the backend:
+1. All-day events first.
+2. Timed events by `start_time` ascending.
+3. Ties broken by `created_at` ascending (creation order).
 
-## Entity: AgentSession
-
-Purpose: Tracks a user-initiated question-answer exchange context for calendar queries.
-
-Fields:
-- `session_id`: UUID
-- `started_at`: datetime (UTC)
-- `status`: enum (`active`, `unavailable`, `closed`)
-
-Validation Rules:
-- Session must be active for query submission.
-
-## Entity: AgentQuery
-
-Purpose: Represents a natural-language question and response derived from calendar task data.
-
-Fields:
-- `query_id`: UUID
-- `session_id`: UUID (FK -> AgentSession)
-- `question_text`: string, required, non-empty
-- `effective_date_context`: date, nullable
-- `response_text`: string, nullable
-- `created_at`: datetime (UTC)
-- `status`: enum (`answered`, `clarification_required`, `error`)
-- `error_message`: string, nullable
-
-Validation Rules:
-- If question is ambiguous and no selected day exists, mark status as `clarification_required`.
-- If agent connection is unavailable, status is `error` with message:
-  `Calendar wizard guy is not home at the momen`.
+Returns an empty `events` list when no events exist for the date.
 
 ## Relationships
 
-- `CalendarDay` 1 -> N `Task` (by `task_date`)
-- `AgentSession` 1 -> N `AgentQuery`
+- Calendar Day 1 -> N Event (by `event_date`). There is no User/account entity in the MVP.
 
-## Derived/Indexing Considerations
+## Indexing and Constraints
 
-- Unique index on `(task_date, title)`.
-- Index on `task_date` for day-view retrieval.
-- Index on `updated_at` for conflict/staleness handling and sorting.
+- Index on `event_date` for day-view retrieval.
+- Database check constraint mirroring the time rules (all-day has no times; timed has both times
+  with `end_time > start_time`).

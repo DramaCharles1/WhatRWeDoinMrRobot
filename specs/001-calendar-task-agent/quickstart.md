@@ -1,128 +1,148 @@
-# Quickstart Validation Guide: SpeciaelFamily
+# Quickstart Validation Guide: Simple Home Calendar MVP
 
 ## Purpose
 
-Validate end-to-end behavior of the SpeciaelFamily feature stack (React UI, Django REST API,
-PostgreSQL, Ollama) and confirm contract, test pyramid, and coverage expectations.
+Set up the app locally, run each part's tests, and validate the MVP behavior end to end.
+Contract details: `specs/001-calendar-task-agent/contracts/openapi.yaml`. Entity and validation
+rules: `specs/001-calendar-task-agent/data-model.md`.
+
+Breaking-change note: This MVP replaces legacy Task routes/schema with Event-only contracts.
+`/tasks` and agent endpoints are intentionally not part of this feature's API surface.
+FR-026 note: legacy Task data is intentionally discarded when migrating to this MVP.
 
 ## Prerequisites
 
-- Docker and Docker Compose installed
-- Node.js 20+ and Python 3.12+ available for local test tooling (optional if everything runs in containers)
-- Ollama model available locally (for example, `llama3.1`)
+- Python 3.12+
+- Node.js 20+
+- PostgreSQL (local install, or via `docker compose -f infra/docker-compose.yml up -d postgres`)
 
 ## Architecture Overview
 
 ```mermaid
 flowchart LR
-    U[User Browser]
-    FE[React Frontend]
-    BE[Django REST API]
-    DB[(PostgreSQL)]
-    AG[Ollama Local LLM]
-    DOC[Swagger UI / OpenAPI]
-
-    U --> FE
-    FE -->|REST JSON| BE
-    BE -->|CRUD| DB
-    BE -->|Agent Prompt/Response| AG
-    BE --> DOC
+    U[Browser] --> FE[React + TypeScript frontend]
+    FE -->|REST JSON /api/v1| BE[Django REST backend]
+    BE -->|Django ORM| DB[(PostgreSQL)]
 ```
 
-## Interface Map
+The frontend only talks to the backend REST API and never to the database.
 
-- Frontend -> Backend: REST over HTTP JSON (`/api/v1/...`)
-- Backend -> Database: PostgreSQL SQL via ORM
-- Backend -> Ollama: local inference call interface
-- Backend -> Docs: OpenAPI generation + Swagger rendering
+## Setup
 
-## Startup
-
-1. Build and start services:
+Backend (from `backend/`):
 
 ```bash
-docker compose -f infra/docker-compose.yml up --build -d
+python -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8000
 ```
 
-2. Confirm services are healthy:
+Frontend (from `frontend/`):
 
 ```bash
-docker compose -f infra/docker-compose.yml ps
+npm install
+cp .env.example .env   # sets VITE_API_BASE_URL, e.g. http://localhost:8000/api/v1
+npm run dev -- --host 0.0.0.0
 ```
 
 Expected outcome:
-- `frontend`, `backend`, `postgres`, and `ollama` show healthy/running state.
-
-## Contract Validation
-
-1. Open Swagger UI endpoint (served by backend).
-2. Confirm contract includes task CRUD endpoints and agent session/query endpoints.
-3. Verify constraints in docs:
-- `title` required and non-empty
-- `creator_name` required
-- duplicate same-day title handling
-- stale task conflict behavior
-- agent unavailable error message
-
-Expected outcome:
-- OpenAPI and Swagger reflect `specs/001-calendar-task-agent/contracts/openapi.yaml` semantics.
+- `GET http://localhost:8000/api/v1/health` returns `{"status": "ok"}`.
+- The calendar UI opens in a browser on the local network.
 
 ## Functional Validation Scenarios
 
-1. Create task with valid title/date/creator -> expect success.
-2. Create task with empty title -> expect validation error.
-    - Expected exact message: `Title is required.`
-3. Create duplicate same-day title -> expect conflict error.
-4. Delete a task in one tab, then update from another tab -> expect stale conflict message and list refresh behavior.
-    - Expected stale message: `This task was already removed in another tab.`
-5. Stop or disconnect Ollama, submit agent question -> expect error message: `Calendar wizard guy is not home at the momen`.
-6. Ask ambiguous question without date context -> expect clarification prompt when no selected day context exists.
-    - Expected clarification code: `clarification_required`
+1. Open the app; the selected day shows its events or a clear empty state.
+2. Create a timed event (title, start, end) -> it appears in the day list without a page refresh.
+3. Create an all-day event -> start/end inputs are hidden and it is listed above timed events.
+4. Save an event with an empty title -> blocked with the message `Title is required.`
+5. Save a timed event with end not after start -> blocked with a clear validation message.
+6. Create two events with the same title on the same day -> both are saved.
+7. Create two timed events with the same start time -> they appear in creation order.
+8. Edit an event (title, time settings, notes) -> updated values are shown.
+9. Delete an event -> it disappears from the list.
+10. Refresh the page and restart the backend -> all saved events are still present.
+11. Navigate to another date -> only that date's events are shown.
 
-## Test Pyramid Execution
+## Testing Each Part
 
-Backend:
+Backend (from `backend/`):
 
 ```bash
-cd backend
-pytest tests/unit
-pytest tests/integration
-pytest tests/contract
-pytest --cov=. --cov-branch --cov-report=xml --cov-report=term
+pytest tests/unit          # models, validation, ordering rules
+pytest tests/integration   # API flows against PostgreSQL
+pytest tests/contract      # responses match the OpenAPI contract
+coverage run -m pytest && coverage report
 ```
 
-Frontend:
+Frontend (from `frontend/`):
 
 ```bash
-cd frontend
-npm test -- --runInBand
-npm run test:component
-npx playwright test
+npm run test:component     # component and unit tests (Vitest + React Testing Library)
 npm run coverage
 ```
 
-Expected outcome:
-- Unit, component, integration, and E2E tests pass.
-- Coverage reports include both line and branch coverage.
+Expected outcome: all suites pass and coverage reports are produced.
 
-## Manual CI Pipeline Validation
+## SC-005 Quality-Gate Evidence
 
-1. Trigger `.github/workflows/ci-manual.yml` via `workflow_dispatch`.
-2. Verify pipeline stages:
-- lint/type checks
-- contract validation
-- backend tests + coverage
-- frontend tests + coverage
-- Playwright E2E
-3. Verify artifacts published: test reports, coverage summaries, and OpenAPI snapshot.
+Run these commands in sequence before merge:
 
-Expected outcome:
-- Pipeline completes successfully when manually triggered.
+Backend (from `backend/`):
 
-## Code Quality Suggestions
+```bash
+ruff check .
+mypy .
+python manage.py check
+pytest tests/unit tests/contract tests/integration
+```
 
-- Enforce pre-commit hooks for format, lint, and import hygiene.
-- Add strict CI thresholds for branch and line coverage by module.
-- Use API contract diff checks to guard backward compatibility.
-- Add architectural decision records (ADRs) for major interface changes.
-- Track flaky tests and gate merges on flake budget.
+Frontend (from `frontend/`):
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run test:component
+```
+
+Record outcomes for each user story validation stream:
+
+- US1 view/day navigation: pass all backend + frontend quality gates.
+- US2 create/edit: pass all backend + frontend quality gates.
+- US3 delete: pass all backend + frontend quality gates.
+
+Latest local execution evidence:
+
+- Frontend gates: `npm run lint`, `npm run typecheck`, `npm run build`, and
+    `npm run test:component` passed.
+- Backend checks: `python manage.py check` and
+    `pytest tests/unit tests/contract tests/integration` passed.
+- Backend lint/type gates currently fail on pre-existing repository issues:
+    Ruff (`I001` import ordering and multiple `E501` line-length findings in
+    existing files) and mypy module mapping (`calendar.views` vs
+    `apps.calendar.views`).
+
+## Code Quality Checks
+
+Backend (from `backend/`):
+
+```bash
+ruff check . && ruff format --check .
+mypy .
+python manage.py check
+```
+
+Frontend (from `frontend/`):
+
+```bash
+npm run lint
+npm run format:check
+npm run typecheck
+npm run build
+```
+
+Expected outcome: no lint, format, type, or build errors. These checks are required before merge.
+
+Note: Ruff, mypy, ESLint, Prettier, and React Router are part of the target toolchain and are
+added to the project during implementation (see `tasks.md`).

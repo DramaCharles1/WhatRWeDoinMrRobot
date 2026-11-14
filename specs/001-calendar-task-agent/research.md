@@ -1,82 +1,96 @@
-# Phase 0 Research: SpeciaelFamily Calendar Task Management
+# Phase 0 Research: Simple Home Calendar MVP
 
-## Decision 1: Frontend stack and runtime
-- Decision: Use React 18 with TypeScript on Node.js 20 LTS for the web frontend.
-- Rationale: React has mature ecosystem support for component testing and Playwright E2E workflows,
-  while TypeScript improves interface correctness for REST and agent-response payloads.
-- Alternatives considered:
-  - Vue: viable but lower team alignment for current requirement set.
-  - Server-rendered templates only: rejected due to richer interaction needs for day-view editing
-    and agent question flows.
+No open clarifications remain; the spec and the supplied architecture/tooling requirements resolve
+all technical unknowns.
 
-## Decision 2: Backend and API style
-- Decision: Use Django 5 + Django REST Framework to expose versioned REST endpoints.
-- Rationale: Django supports fast model-driven APIs, clear validation, and proven integration with
-  PostgreSQL; DRF supports serializer-level rules for title uniqueness and stale-operation checks.
+## Decision 1: Architecture
+- Decision: Client-server with three components: React + TypeScript frontend, Django + DRF
+  backend, PostgreSQL database. Frontend and backend communicate only via REST; the frontend never
+  accesses the database.
+- Rationale: Simple, conventional, and matches the constitution's backend-defined contract rule.
 - Alternatives considered:
-  - FastAPI: strong option but less direct integration with Django admin/model workflows.
-  - GraphQL: rejected because requirement explicitly mandates REST.
+  - Server-rendered Django templates: rejected; a React UI is the chosen frontend.
+  - Direct frontend-to-database access: rejected; violates the architecture constraint.
 
-## Decision 3: API documentation and contract governance
-- Decision: Generate OpenAPI 3.1 contract and publish Swagger UI from backend.
-- Rationale: Contract-first API docs satisfy interface clarity requirement and improve CI checks for
-  backward compatibility.
+## Decision 2: Frontend stack
+- Decision: React, TypeScript (strict), Vite, React Router, ESLint, Prettier, Vitest, React Testing
+  Library.
+- Rationale: Small, well-supported toolchain; strict typing guards the REST payload shapes.
 - Alternatives considered:
-  - Hand-written markdown API docs only: rejected due to drift risk.
-  - Postman-only contract: rejected because OpenAPI is explicitly required.
+  - Additional state libraries (Redux, etc.): rejected; React state/hooks are sufficient.
+  - E2E framework (Playwright): deferred; component tests cover MVP flows.
 
-## Decision 4: Persistence and data constraints
-- Decision: Use PostgreSQL 16 with unique constraint on (task_date, title).
-- Rationale: Enforces same-day uniqueness at database level while backend validation provides
-  user-facing errors.
+## Decision 3: Frontend structure and API access
+- Decision: Reusable components separated from application-specific pages; a single small API
+  client module using `fetch`; backend base URL from a Vite environment variable
+  (`VITE_API_BASE_URL`). Loading, error, and empty states in every data-driven view; responsive
+  layout for desktop, tablet, and mobile.
+- Rationale: Straightforward, avoids unnecessary abstraction, easy to test and configure.
 - Alternatives considered:
-  - SQLite: rejected for production-like concurrency behavior needs.
-  - In-memory storage: rejected due to persistence requirements.
+  - HTTP client library (axios): rejected as unnecessary.
+  - Hardcoded API URL: rejected; breaks across environments.
 
-## Decision 5: Agent integration pattern
-- Decision: Backend mediates all agent requests and routes prompt context to local Ollama models.
-- Rationale: Preserves constitutional requirement that frontend never directly calls agent runtime;
-  enables consistent error handling and observability.
+## Decision 4: Backend stack
+- Decision: Python, Django, Django REST Framework, Django ORM, Ruff, mypy, pytest, pytest-django,
+  coverage.py. Endpoints, serializers, and business rules kept in separate, small modules.
+- Rationale: Established Django conventions; serializers hold validation; minimal layering.
 - Alternatives considered:
-  - Frontend-direct Ollama calls: rejected for policy/control reasons.
-  - Hosted external LLM: rejected because requirement specifies local Ollama.
+  - FastAPI: rejected; Django/DRF is the chosen stack.
+  - Extra service/repository layers: rejected as unnecessary for one entity.
 
-## Decision 6: Ambiguous question handling
-- Decision: For ambiguous date context (for example "What is next?"), default to selected calendar
-  day; if no selected day exists, request clarification and do not guess beyond today.
-- Rationale: Minimizes user confusion while preserving predictable behavior and testability.
+## Decision 5: Event model
+- Decision: Single `Event` entity with title, date, `is_all_day`, nullable `start_time` and
+  `end_time`, optional notes, and created/updated timestamps. All-day events are single-day and
+  have no times; timed events require both times with end after start.
+- Rationale: Directly satisfies FR-003, FR-004, FR-013, FR-015 with minimal schema.
 - Alternatives considered:
-  - Always infer "today": rejected because it ignores explicit calendar context.
-  - Return hard error only: rejected because clarification prompt is more usable.
+  - Start/end datetimes with time zones: rejected; time-zone handling is out of MVP scope.
+  - Recurrence fields: rejected; out of scope.
 
-## Decision 7: Test strategy and coverage
-- Decision: Enforce conventional pyramid: unit -> component -> integration -> E2E (Playwright),
-  and collect both line and branch coverage in CI artifacts.
-- Rationale: Balances fast feedback with behavior confidence across API/UI/agent boundaries.
+## Decision 6: Day ordering
+- Decision: Backend returns a day's events ordered all-day first, then by `start_time`, then by
+  `created_at` (creation order tie-breaker). The frontend renders the list as received.
+- Rationale: Single source of ordering truth; deterministic and testable (FR-006a/b/c).
 - Alternatives considered:
-  - E2E-heavy strategy: rejected due to slow feedback and brittle tests.
-  - Unit-only strategy: rejected because integration and agent paths are high risk.
+  - Frontend-side sorting: rejected; duplicates logic and risks divergence.
 
-## Decision 8: Containerization and local orchestration
-- Decision: Containerize frontend, backend, and supporting services with Docker; orchestrate with
-  Docker Compose including PostgreSQL and Ollama containers.
-- Rationale: Consistent local/dev execution and reproducible CI test environments.
+## Decision 7: Duplicates and validation
+- Decision: Duplicate titles on the same day are allowed (no unique constraint). Title is required
+  and trimmed; time rules are validated in the serializer and mirrored by a database check
+  constraint where practical.
+- Rationale: Matches FR-014 and FR-008/FR-013.
 - Alternatives considered:
-  - Native host-only setup: rejected due to dependency drift.
-  - Kubernetes-first setup: rejected as unnecessary for initial scope.
+  - Unique (date, title) constraint: rejected by spec decision.
 
-## Decision 9: CI execution model
-- Decision: Create manually triggered CI workflow (`workflow_dispatch`) that runs lint checks,
-  contract checks, tests by pyramid stage, and coverage report publication.
-- Rationale: Meets initial requirement while allowing controlled rollout of quality gates.
+## Decision 8: Persistence
+- Decision: PostgreSQL via Django ORM and migrations; data survives refreshes and restarts.
+- Rationale: Required by FR-012; PostgreSQL is the specified database.
 - Alternatives considered:
-  - Always-on push CI only: deferred until baseline pipeline stabilizes.
-  - No CI: rejected due to quality and governance risks.
+  - SQLite or browser storage: rejected; PostgreSQL is specified and backend is the source of truth.
 
-## Decision 10: Code quality guardrails
-- Decision: Standardize formatting/linting/type checks and PR quality gates for both frontend and
-  backend; enforce minimum branch and line coverage thresholds per project area.
-- Rationale: Reduces regression risk and supports constitutional compliance review.
+## Decision 9: Testing and quality gates
+- Decision: Backend unit, integration, and API contract tests with pytest/pytest-django; coverage
+  via coverage.py; Ruff and mypy as lint/type gates. Frontend component and unit tests with
+  Vitest + React Testing Library; ESLint and Prettier checks. Test and setup instructions are
+  documented in `quickstart.md`.
+- Rationale: Satisfies constitution principles III and the documentation/quality-gate rules.
 - Alternatives considered:
-  - Reviewer-only quality process: rejected due to inconsistency.
-  - Coverage without thresholds: rejected because it weakens signal value.
+  - Manual-only verification: rejected; constitution requires automated tests.
+
+## Decision 10: Local operations
+- Decision: Run on localhost/local network only. Backend emits basic structured logs, returns
+  clear JSON error bodies, and exposes `GET /api/v1/health`. Docker Compose is optional for
+  starting PostgreSQL (and the stack) locally.
+- Rationale: Meets constitution principles IV and V without dashboards or alerting.
+- Alternatives considered:
+  - Metrics/dashboards/alerts: rejected as out of MVP scope.
+
+## Decision 11: Breaking-change governance for Task-to-Event cutover
+- Decision: Use explicit feature-level approval artifacts for the intentional API/schema break,
+  recorded in both `spec.md` and `plan.md` (rationale, consumer impact, rollback/mitigation,
+  and reviewer sign-off requirement).
+- Rationale: Satisfies constitution delivery constraint requiring backward compatibility unless a
+  breaking change is explicitly approved.
+- Alternatives considered:
+  - Constitution amendment: rejected; unnecessary for a single feature-level break.
+  - Backward-compatibility shim: rejected; adds complexity outside MVP scope.

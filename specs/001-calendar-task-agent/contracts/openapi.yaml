@@ -1,14 +1,29 @@
 openapi: 3.1.0
 info:
-  title: SpeciaelFamily Calendar API
+  title: Home Calendar API
   version: 1.0.0
-  description: REST API for calendar task management and agent Q&A.
+  description: REST API for creating, listing, editing, and deleting calendar events.
 servers:
   - url: http://localhost:8000/api/v1
 paths:
-  /tasks:
+  /health:
     get:
-      summary: List tasks for a date
+      summary: Backend health check
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+  /events:
+    get:
+      summary: List events for a date (all-day first, then by start time, then creation order)
       parameters:
         - in: query
           name: date
@@ -18,146 +33,89 @@ paths:
             format: date
       responses:
         '200':
-          description: Tasks for selected date
+          description: Events for the selected date (empty list when none)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TaskListResponse'
+                $ref: '#/components/schemas/EventListResponse'
+        '400':
+          description: Missing or invalid date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
-      summary: Create a task
+      summary: Create an event
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TaskCreateRequest'
+              $ref: '#/components/schemas/EventWriteRequest'
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                $ref: '#/components/schemas/Event'
         '400':
           description: Validation failed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Duplicate title for same day
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /tasks/{taskId}:
+  /events/{eventId}:
+    parameters:
+      - in: path
+        name: eventId
+        required: true
+        schema:
+          type: string
+          format: uuid
     patch:
-      summary: Update an existing task
-      parameters:
-        - in: path
-          name: taskId
-          required: true
-          schema:
-            type: string
-            format: uuid
+      summary: Update an existing event
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TaskUpdateRequest'
+              $ref: '#/components/schemas/EventUpdateRequest'
       responses:
         '200':
           description: Updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
-        '404':
-          description: Task not found
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Validation failed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Stale update/delete conflict
+        '404':
+          description: Event not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     delete:
-      summary: Delete an existing task
-      parameters:
-        - in: path
-          name: taskId
-          required: true
-          schema:
-            type: string
-            format: uuid
+      summary: Delete an existing event
       responses:
         '204':
           description: Deleted
         '404':
-          description: Task not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '409':
-          description: Stale update/delete conflict
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /agent/session:
-    post:
-      summary: Start agent session
-      responses:
-        '201':
-          description: Session created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentSession'
-        '503':
-          description: Agent unavailable
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /agent/query:
-    post:
-      summary: Ask a calendar question
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AgentQueryRequest'
-      responses:
-        '200':
-          description: Answered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentQueryResponse'
-        '422':
-          description: Clarification needed for ambiguous date context
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '503':
-          description: Agent unavailable
+          description: Event not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    Task:
+    Event:
       type: object
-      required: [id, title, task_date, creator_name, created_at, updated_at]
+      required: [id, title, event_date, is_all_day, start_time, end_time, notes, created_at, updated_at]
       properties:
         id:
           type: string
@@ -166,13 +124,19 @@ components:
           type: string
           minLength: 1
           maxLength: 200
-        task_date:
+        event_date:
           type: string
           format: date
-        creator_name:
-          type: string
-          minLength: 1
-          maxLength: 100
+        is_all_day:
+          type: boolean
+        start_time:
+          type: [string, 'null']
+          format: time
+          description: Required when is_all_day is false; null when true.
+        end_time:
+          type: [string, 'null']
+          format: time
+          description: Required when is_all_day is false and must be later than start_time; null when true.
         notes:
           type: string
           maxLength: 2000
@@ -182,102 +146,71 @@ components:
         updated_at:
           type: string
           format: date-time
-    TaskCreateRequest:
+    EventWriteRequest:
       type: object
-      required: [title, task_date, creator_name]
+      required: [title, event_date, is_all_day]
       properties:
         title:
           type: string
           minLength: 1
           maxLength: 200
-        task_date:
+        event_date:
           type: string
           format: date
-        creator_name:
-          type: string
-          minLength: 1
-          maxLength: 100
+        is_all_day:
+          type: boolean
+        start_time:
+          type: [string, 'null']
+          format: time
+        end_time:
+          type: [string, 'null']
+          format: time
         notes:
           type: string
           maxLength: 2000
-    TaskUpdateRequest:
+    EventUpdateRequest:
       type: object
+      description: Any subset of EventWriteRequest fields; the merged result must satisfy the same rules.
       properties:
         title:
           type: string
           minLength: 1
           maxLength: 200
-        task_date:
+        event_date:
           type: string
           format: date
-        creator_name:
-          type: string
-          minLength: 1
-          maxLength: 100
+        is_all_day:
+          type: boolean
+        start_time:
+          type: [string, 'null']
+          format: time
+        end_time:
+          type: [string, 'null']
+          format: time
         notes:
           type: string
           maxLength: 2000
-    TaskListResponse:
+    EventListResponse:
       type: object
-      required: [date, tasks]
+      required: [date, events]
       properties:
         date:
           type: string
           format: date
-        tasks:
+        events:
           type: array
           items:
-            $ref: '#/components/schemas/Task'
-    AgentSession:
-      type: object
-      required: [session_id, status, started_at]
-      properties:
-        session_id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum: [active, unavailable, closed]
-        started_at:
-          type: string
-          format: date-time
-    AgentQueryRequest:
-      type: object
-      required: [session_id, question_text]
-      properties:
-        session_id:
-          type: string
-          format: uuid
-        question_text:
-          type: string
-          minLength: 1
-        selected_date_context:
-          type: string
-          format: date
-    AgentQueryResponse:
-      type: object
-      required: [query_id, status]
-      properties:
-        query_id:
-          type: string
-          format: uuid
-        status:
-          type: string
-          enum: [answered, clarification_required, error]
-        response_text:
-          type: string
-        clarification_prompt:
-          type: string
-        error_message:
-          type: string
+            $ref: '#/components/schemas/Event'
     ErrorResponse:
       type: object
       required: [code, message]
       properties:
         code:
           type: string
+          examples: [validation_error, not_found]
         message:
           type: string
+          examples: ['Title is required.']
         details:
           type: object
           additionalProperties: true

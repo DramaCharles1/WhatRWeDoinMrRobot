@@ -15,5 +15,6 @@ class RequestContextMiddleware(MiddlewareMixin):
         response["X-Correlation-ID"] = correlation_id
         started_ms = getattr(request, "_started_ms", monotonic_ms())
         latency_ms = max(0, monotonic_ms() - started_ms)
+        response["X-Request-Latency-Ms"] = str(latency_ms)
         emit_request_metric(request.path, request.method, latency_ms, correlation_id)
         return apply_security_headers(response)
