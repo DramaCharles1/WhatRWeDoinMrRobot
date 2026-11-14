@@ -27,7 +27,7 @@ description: "Task list for implementing Simple Home Calendar MVP"
 - [ ] T003 [P] Configure backend environment defaults for local PostgreSQL and API settings in `backend/backend/settings.py` and `.env.example`.
 - [ ] T004 [P] Configure frontend API base URL wiring via environment variable in `frontend/src/services/apiClient.ts` and `.env.example`.
 - [ ] T005 [P] Align local compose services to calendar MVP scope (frontend/backend/postgres only) in `infra/docker-compose.yml`.
-- [ ] T006 [P] Ensure manual CI workflow contains backend/frontend test and quality-check placeholders in `.github/workflows/ci-manual.yml`.
+- [ ] T006 [P] Ensure manual CI workflow contains backend/frontend quality checks for static analysis, tests, and build validation in `.github/workflows/ci-manual.yml`.
 
 ---
 
@@ -131,7 +131,7 @@ description: "Task list for implementing Simple Home Calendar MVP"
 - [ ] T041 [P] Normalize event-vs-task terminology in user-facing/backend docs and API notes in `README.md` and `specs/001-calendar-task-agent/quickstart.md`.
 - [ ] T042 [P] Add or update backend health-check validation test for `/api/v1/health` in `backend/tests/integration/test_health_endpoint.py`.
 - [ ] T043 [P] Add SC-003 timing verification test using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) in `backend/tests/integration/test_event_save_latency.py`.
-- [ ] T044 Add frontend and backend quality-check task execution in manual CI workflow in `.github/workflows/ci-manual.yml`.
+- [ ] T044 Add frontend and backend quality-gate execution including lint/static analysis, type-checks, and full build validation in `.github/workflows/ci-manual.yml`.
 - [ ] T045 Run and document quickstart validation outcomes for all three user stories in `specs/001-calendar-task-agent/quickstart.md`.
 - [ ] T046 [P] Add frontend component accessibility tests for keyboard navigation, visible focus states, and labeled validation messages in `frontend/tests/component/taskAccessibility.spec.tsx`.
 - [ ] T047 [P] Add responsive layout tests for core flows at 360px and 1280px viewports in `frontend/tests/component/calendarResponsive.spec.tsx`.

@@ -20,6 +20,10 @@
 - Q: What recovery behavior should be required when create/update/delete fails so users can continue safely without losing context? -> A: Require only a clear error message; no retained inputs, retry control, or reconciliation behavior is required.
 - Q: Which minimum non-functional requirement set should the MVP spec include to make accessibility and responsiveness explicit and testable? -> A: Add explicit MVP NFRs for keyboard access, visible focus states, labeled form controls/errors, and responsive usability at 360px and 1280px without horizontal scrolling in core flows.
 
+### Session 2026-11-14
+
+- Q: Should static code analysis be enforced as a required quality gate before merge? -> A: Yes. Static analysis, type checking, and successful production builds are required for both backend and frontend before merge; failing any gate blocks delivery.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - View the Calendar (Priority: P1)
@@ -136,6 +140,7 @@ As a user, I can delete an event when it is no longer needed so the calendar sta
 - **SC-002**: Users can edit or delete an event in under 30 seconds once it is visible on the page.
 - **SC-003**: 95% of tested event saves and updates are reflected in the selected day view without a page refresh.
 - **SC-004**: 90% of users can complete a basic event-creation flow without needing instructions or help.
+- **SC-005**: All required backend and frontend quality gates pass before merge, including static analysis, type checking, and successful production builds.
 
 ### Measurement Protocol
 
@@ -143,13 +148,4 @@ As a user, I can delete an event when it is no longer needed so the calendar sta
 - For each measured flow, sample size MUST be at least 20 attempts (`n>=20`).
 - For SC-001 and SC-002 timing, measurement MUST start at user submit action and end when the resulting update is visible in the selected day view.
 - For SC-003, the denominator MUST include only successful save/update attempts.
-
-## Assumptions
-
-- The MVP is designed for a single local user in a home environment.
-- The app is meant to run locally within a home or local network, not for public internet deployment.
-- The first release focuses on daily event planning rather than complex scheduling, recurring events, shared calendars, or advanced analytics.
-- Event details are intentionally lightweight to keep the interface simple and fast.
-- The first release supports both timed events and all-day events, but does not include recurring rules or advanced time-zone features.
-- All-day events are single-day only, and start/end time controls are hidden when all-day is selected.
-- No authentication, team access, integrations, or automation are required for the initial version.
+- For SC-005, the implementation MUST pass clean local runs of: backend `ruff check .`, `mypy .`, `python manage.py check`; frontend `npm run lint`, `npx tsc --noEmit`, and `npm run build`.

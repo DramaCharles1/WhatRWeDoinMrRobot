@@ -87,6 +87,7 @@ Backend (from `backend/`):
 ```bash
 ruff check . && ruff format --check .
 mypy .
+python manage.py check
 ```
 
 Frontend (from `frontend/`):
@@ -95,9 +96,10 @@ Frontend (from `frontend/`):
 npm run lint
 npm run format:check
 npx tsc --noEmit
+npm run build
 ```
 
-Expected outcome: no lint, format, or type errors. These checks are required before merge.
+Expected outcome: no lint, format, type, or build errors. These checks are required before merge.
 
 Note: Ruff, mypy, ESLint, Prettier, and React Router are part of the target toolchain and are
 added to the project during implementation (see `tasks.md`).
