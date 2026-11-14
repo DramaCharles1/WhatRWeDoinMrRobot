@@ -1,10 +1,11 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "dev-only-secret"
-DEBUG = True
-ALLOWED_HOSTS = ["*"]
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-secret")
+DEBUG = os.getenv("DJANGO_DEBUG", "true").lower() == "true"
+ALLOWED_HOSTS = [h.strip() for h in os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",") if h.strip()]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -51,14 +52,17 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "calendar",
-        "USER": "calendar",
-        "PASSWORD": "calendar",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.getenv("DB_NAME", "calendar"),
+        "USER": os.getenv("DB_USER", "calendar"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "calendar"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
+
+API_BASE_PATH = os.getenv("API_BASE_PATH", "/api/v1")
+API_HEALTH_PATH = os.getenv("API_HEALTH_PATH", f"{API_BASE_PATH}/health")
 
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"

@@ -13,14 +13,13 @@ services:
   backend:
     image: python:3.12
     working_dir: /app
-    command: sh -c "pip install -e . && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "pip install -e .[dev] && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     volumes:
       - ../backend:/app
     depends_on:
       - postgres
-      - ollama
 
   postgres:
     image: postgres:16
@@ -30,8 +29,3 @@ services:
       POSTGRES_PASSWORD: calendar
     ports:
       - "5432:5432"
-
-  ollama:
-    image: ollama/ollama:latest
-    ports:
-      - "11434:11434"

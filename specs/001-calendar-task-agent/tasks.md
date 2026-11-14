@@ -22,12 +22,12 @@ description: "Task list for implementing Simple Home Calendar MVP"
 
 **Purpose**: Project initialization and baseline tooling.
 
-- [ ] T001 Align backend dependency/tooling configuration with plan requirements in `backend/pyproject.toml`.
-- [ ] T002 Align frontend dependency/tooling configuration with plan requirements in `frontend/package.json`.
-- [ ] T003 [P] Configure backend environment defaults for local PostgreSQL and API settings in `backend/backend/settings.py` and `.env.example`.
-- [ ] T004 [P] Configure frontend API base URL wiring via environment variable in `frontend/src/services/apiClient.ts` and `.env.example`.
-- [ ] T005 [P] Align local compose services to calendar MVP scope (frontend/backend/postgres only) in `infra/docker-compose.yml`.
-- [ ] T006 [P] Ensure manual CI workflow contains backend/frontend quality checks for static analysis, tests, and build validation in `.github/workflows/ci-manual.yml`.
+- [X] T001 Align backend dependency/tooling configuration with plan requirements in `backend/pyproject.toml`.
+- [X] T002 Align frontend dependency/tooling configuration with plan requirements in `frontend/package.json`.
+- [X] T003 [P] Configure backend environment defaults for local PostgreSQL and API settings in `backend/backend/settings.py` and `.env.example`.
+- [X] T004 [P] Configure frontend API base URL wiring via environment variable in `frontend/src/services/apiClient.ts` and `.env.example`.
+- [X] T005 [P] Align local compose services to calendar MVP scope (frontend/backend/postgres only) in `infra/docker-compose.yml`.
+- [X] T006 [P] Ensure manual CI workflow contains backend/frontend quality checks for static analysis, tests, and build validation in `.github/workflows/ci-manual.yml`.
 
 ---
 

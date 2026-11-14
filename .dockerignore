@@ -7,6 +7,10 @@ node_modules/
 dist/
 build/
 coverage/
+__pycache__/
+*.pyc
+.venv/
+venv/
 
 # Logs and local env
 *.log*
