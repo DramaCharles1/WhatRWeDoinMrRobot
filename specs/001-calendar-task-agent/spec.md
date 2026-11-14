@@ -18,7 +18,7 @@
 - Q: Which measurement protocol should the spec adopt for SC-001 to SC-003 so the thresholds are objectively verifiable without hidden assumptions? -> A: Add protocol measured on localhost, sample size n>=20 per flow, timing starts at submit action, timing ends when update is visible in selected day view, and SC-003 includes successful save/update attempts only.
 - Q: How should acceptance scenarios be mapped to requirement IDs to satisfy traceability for CHK008? -> A: Add `Maps to:` requirement ID tags beneath each acceptance scenario.
 - Q: What recovery behavior should be required when create/update/delete fails so users can continue safely without losing context? -> A: Require only a clear error message; no retained inputs, retry control, or reconciliation behavior is required.
-- Q: Which minimum non-functional requirement set should the MVP spec include to make accessibility and responsiveness explicit and testable? -> A: Keep current spec as-is and rely on Constitution Principle I only.
+- Q: Which minimum non-functional requirement set should the MVP spec include to make accessibility and responsiveness explicit and testable? -> A: Add explicit MVP NFRs for keyboard access, visible focus states, labeled form controls/errors, and responsive usability at 360px and 1280px without horizontal scrolling in core flows.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -119,6 +119,8 @@ As a user, I can delete an event when it is no longer needed so the calendar sta
 - **FR-021**: When title validation fails because the submitted value is empty after trimming, the system MUST return the exact validation message `Title is required.`.
 - **FR-022**: When timed-event validation fails because `end_time` is not later than `start_time`, the system MUST return the exact validation message `End time must be later than start time.`.
 - **FR-023**: When create, update, or delete operations fail, the system MUST return a clear operation-specific error message. No additional recovery requirements (input retention, retry action, or automatic reconcile) are mandated for MVP.
+- **FR-024**: The system MUST provide keyboard-accessible interaction for core calendar controls (date navigation, event create/edit/delete actions), visible focus indicators for interactive elements, and accessible labels for form fields and validation messages.
+- **FR-025**: The system MUST support responsive usability for core flows at viewport widths of 360px and 1280px, without horizontal scrolling in day navigation and event create/edit/delete interactions.
 
 ### Key Entities *(include if feature involves data)*
 

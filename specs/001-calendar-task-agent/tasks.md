@@ -133,6 +133,10 @@ description: "Task list for implementing Simple Home Calendar MVP"
 - [ ] T043 [P] Add SC-003 timing verification test using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) in `backend/tests/integration/test_event_save_latency.py`.
 - [ ] T044 Add frontend and backend quality-check task execution in manual CI workflow in `.github/workflows/ci-manual.yml`.
 - [ ] T045 Run and document quickstart validation outcomes for all three user stories in `specs/001-calendar-task-agent/quickstart.md`.
+- [ ] T046 [P] Add frontend component accessibility tests for keyboard navigation, visible focus states, and labeled validation messages in `frontend/tests/component/taskAccessibility.spec.tsx`.
+- [ ] T047 [P] Add responsive layout tests for core flows at 360px and 1280px viewports in `frontend/tests/component/calendarResponsive.spec.tsx`.
+- [ ] T048 Implement accessibility semantics for core controls and form validation messaging in `frontend/src/components/DayNavigator.tsx`, `frontend/src/components/TaskForm.tsx`, and `frontend/src/components/TaskList.tsx`.
+- [ ] T049 Implement responsive layout refinements for 360px and 1280px core flows in `frontend/src/pages/CalendarPage.tsx` and `frontend/src/components/TaskList.tsx`.
 
 ---
 

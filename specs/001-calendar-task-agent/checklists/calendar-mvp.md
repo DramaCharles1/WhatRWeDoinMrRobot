@@ -35,7 +35,7 @@
 
 ## Non-Functional Requirements
 
-- [ ] CHK011 Are non-functional requirements for accessibility and responsiveness explicitly stated for MVP interaction paths, not only implied by principle text? [Non-Functional, Gap, Constitution §I]
+- [x] CHK011 Are non-functional requirements for accessibility and responsiveness explicitly stated for MVP interaction paths, not only implied by principle text? [Non-Functional, Gap, Constitution §I]
 
 ## Dependencies And Assumptions
 
