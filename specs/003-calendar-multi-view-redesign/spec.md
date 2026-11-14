@@ -8,6 +8,12 @@
 
 **Input**: User description: "A more nice looking frontend. It should be possible to see the calendar in different views. By month or by week. Default view should be current week. Every event for a day should be seen for each view. It should be possible to select a day and see it for itself. It should be possible to see all events for the day in that view as well. It should be possible to select a event and see details about it, edit it or delete it. In every view it should be possible to add new event. Unit tests should cover all new components and pages. End-to-end tests should cover: (1) change view from week to monthly, (2) change view from weekly to daily, (3) add/edit/save/delete the same event in weekly view. The style should reflect the taste of images in /theme (colors, unicorns, soccer, fonts)."
 
+## Clarifications
+
+### Session 2026-11-15
+
+- Q: Should the range-based event retrieval path include explicit observability and resilience requirements? -> A: Yes. The range-based event retrieval path must include structured logging plus defined timeout and retry behavior.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Navigate Calendar Views (Priority: P1)
@@ -86,6 +92,8 @@ As a user, I see a polished calendar interface aligned with the product's playfu
   - Switch from week view to month view.
   - Switch from week view to day view.
   - Create an event in week view, edit and save the same event, then delete that same event.
+- **FR-015**: The range-based event retrieval operation used by multi-day views MUST emit structured logs and clear failure messages for both success and error outcomes.
+- **FR-016**: The range-based event retrieval operation used by multi-day views MUST apply a documented timeout and bounded retry policy for transient failures before returning a user-visible failure.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -103,6 +111,8 @@ As a user, I see a polished calendar interface aligned with the product's playfu
 - **SC-004**: In validation testing, all events scheduled for a day are visible and reachable from each relevant view for 100% of tested scenarios.
 - **SC-005**: All required new unit and end-to-end tests pass in CI for this feature before release approval.
 - **SC-006**: In stakeholder review, visual direction is approved as consistent with the theme references for colors, unicorn/soccer motifs, and typography.
+- **SC-007**: In validation testing, 100% of range-based retrieval failure scenarios produce a clear user-visible error and structured log entries containing request context and failure reason.
+- **SC-008**: In validation testing, the documented timeout and retry behavior for range-based retrieval is verified in automated tests and behaves as specified in 100% of tested transient-failure scenarios.
 
 ## Assumptions
 

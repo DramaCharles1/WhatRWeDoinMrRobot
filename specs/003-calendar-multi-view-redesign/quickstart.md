@@ -94,6 +94,22 @@ Expected outcomes:
 - Event edit/save persists updated data.
 - Event delete removes the same event from visible calendar state.
 
+### 5) Backend resiliency and observability validation for range retrieval
+
+Run backend contract and integration tests:
+
+```bash
+cd backend
+pytest tests/contract/test_events_list_contract.py -k range
+pytest tests/integration/test_event_range_resilience.py
+```
+
+Expected outcomes:
+- Invalid range requests return clear validation errors.
+- Transient range retrieval failures enforce documented timeout and bounded retry behavior.
+- Failure responses expose clear user-visible error messages.
+- Structured logs contain request context and failure reason for range retrieval failures.
+
 ## Related Artifacts
 
 - Specification: `spec.md`

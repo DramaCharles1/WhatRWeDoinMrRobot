@@ -6,7 +6,7 @@
 
 ## Summary
 
-Implement a full calendar experience with week, month, and day views (defaulting to current week), preserving complete event visibility and CRUD access from every view. The plan adds an explicit view-state model, introduces date-range event retrieval for efficient multi-day rendering, and defines frontend interaction contracts plus targeted unit/component and Playwright E2E coverage for required navigation and event lifecycle flows. Styling will shift to a playful, branded direction based on `theme/` references (colors, unicorn/soccer motifs, and expressive typography) while preserving mobile/desktop usability.
+Implement a full calendar experience with week, month, and day views (defaulting to current week), preserving complete event visibility and CRUD access from every view. The plan adds an explicit view-state model, introduces date-range event retrieval for efficient multi-day rendering, and defines frontend interaction contracts plus targeted unit/component and Playwright E2E coverage for required navigation and event lifecycle flows. It also requires structured logging, clear failure messaging, and documented timeout/retry behavior for range-based retrieval paths to satisfy the clarified reliability and observability requirements. Styling will shift to a playful, branded direction based on `theme/` references (colors, unicorn/soccer motifs, and expressive typography) while preserving mobile/desktop usability.
 
 ## Technical Context
 
@@ -37,6 +37,8 @@ Implement a full calendar experience with week, month, and day views (defaulting
 - All events for a selected day must remain discoverable from all relevant views
 - Visual direction must align with `theme/` palette and motifs without requiring exact image replication
 - New view and CRUD behavior must be covered by automated component/unit and E2E tests
+- Range-based event retrieval must emit structured logs with clear error messages for success and failure outcomes
+- Range-based event retrieval must use documented timeout and bounded retry behavior for transient failures
 
 **Scale/Scope**:
 - One calendar page redesign
@@ -52,7 +54,7 @@ Pre-Design Gate Review:
 - Principle I (User-First Calendar Experience): PASS. Plan prioritizes clear navigation between views, day selection, and complete event visibility on all screen sizes.
 - Principle II (Simple, Backend-Defined Data Contracts): PASS. Frontend remains API-driven; range-read contract is defined at backend boundary rather than frontend-only data stitching.
 - Principle III (Testable Task Workflows): PASS. Required unit/component and E2E coverage is explicitly planned for view switching and event lifecycle operations.
-- Principle IV (Reliable Integrations and Observability): PASS. API interaction patterns remain explicit; failures remain surfaced via existing structured backend error responses.
+- Principle IV (Reliable Integrations and Observability): PASS. Plan explicitly includes structured logs, clear failure messages, and timeout/retry behavior for the new range-retrieval integration.
 - Principle V (Security and Data Boundaries): PASS. Scope remains local-only calendar behavior with no expansion to external/public exposure.
 
 Post-Design Re-check:

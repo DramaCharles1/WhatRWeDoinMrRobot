@@ -32,7 +32,7 @@ paths:
   /events/range:
     get:
       summary: List events grouped by day across a date range
-      description: Supports week and month views by returning all events between start and end dates inclusive.
+      description: Supports week and month views by returning all events between start and end dates inclusive, with bounded timeout/retry handling for transient backend failures.
       parameters:
         - in: query
           name: start_date
@@ -55,6 +55,12 @@ paths:
                 $ref: '#/components/schemas/EventRangeResponse'
         '400':
           description: Missing/invalid range parameters or end before start.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Temporary range retrieval failure after bounded retries or timeout.
           content:
             application/json:
               schema:
@@ -134,8 +140,10 @@ components:
       properties:
         code:
           type: string
+          examples: [validation_error, service_unavailable, timeout]
         message:
           type: string
+          examples: ['Unable to load events for this date range. Please try again.']
         details:
           type: object
           additionalProperties: true

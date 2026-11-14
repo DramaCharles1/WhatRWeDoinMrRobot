@@ -48,3 +48,10 @@
 - Alternatives considered:
   - Full page reload after every mutation: rejected as disruptive and contrary to spec outcomes.
   - Optimistic updates with delayed reconciliation only: rejected for MVP due to rollback complexity.
+
+## Decision 8: Range retrieval observability and resiliency
+- Decision: Treat `GET /events/range` as a production-significant backend interaction that must emit structured logs on success and error, return clear user-visible failure messaging, and apply documented timeout with bounded retries for transient failures.
+- Rationale: Aligns with clarified FR-015/FR-016 and SC-007/SC-008 while satisfying constitution Principle IV without introducing complex monitoring systems.
+- Alternatives considered:
+  - Rely on default framework exception logging only: rejected because it does not guarantee request-context-rich structured logs or consistent error clarity.
+  - Unlimited retries for transient failures: rejected due to risk of cascading latency and degraded user responsiveness.
