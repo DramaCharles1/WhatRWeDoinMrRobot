@@ -18,9 +18,9 @@
 
 **Purpose**: Install and wire Playwright into the existing frontend workspace.
 
-- [ ] T001 Add Playwright test dependency and E2E scripts in `frontend/package.json`
-- [ ] T002 Create Playwright configuration for local frontend/backend URLs in `frontend/playwright.config.ts`
-- [ ] T003 [P] Add `.gitignore` entries for Playwright artifacts (`test-results`, `playwright-report`) in `frontend/.gitignore`
+- [X] T001 Add Playwright test dependency and E2E scripts in `frontend/package.json`
+- [X] T002 Create Playwright configuration for local frontend/backend URLs in `frontend/playwright.config.ts`
+- [X] T003 [P] Add `.gitignore` entries for Playwright artifacts (`test-results`, `playwright-report`) in `frontend/.gitignore`
 
 ---
 
