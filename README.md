@@ -58,6 +58,33 @@ Frontend (from `frontend/`):
 npm run test:component
 ```
 
+### Frontend E2E (Playwright)
+
+From `frontend/`, install dependencies and browser binaries if needed:
+
+```bash
+npm install
+npx playwright install chromium
+```
+
+Ensure services are running before E2E execution:
+
+- Backend available at `http://127.0.0.1:8000`
+- Frontend available at `http://127.0.0.1:5173`
+
+Run all E2E tests:
+
+```bash
+npm run test:e2e
+```
+
+Useful variants:
+
+```bash
+npm run test:e2e:headed
+npm run test:e2e:debug
+```
+
 ## Static Code Analysis
 
 Backend static checks (from `backend/`):
