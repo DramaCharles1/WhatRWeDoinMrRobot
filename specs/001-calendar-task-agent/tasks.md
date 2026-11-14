@@ -140,19 +140,19 @@ description: "Task list for implementing Simple Home Calendar MVP"
 
 **Purpose**: Quality hardening, documentation alignment, and release readiness across stories.
 
-- [ ] T048 [P] Normalize event-vs-task terminology and remove agent references in user-facing/backend docs and API notes in `README.md` and `specs/001-calendar-task-agent/quickstart.md`, and document that existing task data is discarded on migrate (FR-026).
-- [ ] T049 [P] Add or update backend health-check validation test for `/api/v1/health` in `backend/tests/integration/test_health_endpoint.py`.
-- [ ] T050 [P] Add SC-003 timing verification test using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) in `backend/tests/integration/test_event_save_latency.py`.
-- [ ] T051 Add frontend and backend quality-gate execution including lint/static analysis, type-checks, and full build validation (`ruff check .`, `mypy .`, `python manage.py check`, `npm run lint`, `npx tsc --noEmit`, `npm run build`) in `.github/workflows/ci-manual.yml`.
-- [ ] T052 [P] Add frontend component accessibility tests for keyboard navigation, visible focus states, and labeled validation messages in `frontend/tests/component/taskAccessibility.spec.tsx`.
-- [ ] T053 [P] Add responsive layout tests for core flows at 360px and 1280px viewports in `frontend/tests/component/calendarResponsive.spec.tsx`.
-- [ ] T054 Implement accessibility semantics for core controls and form validation messaging in `frontend/src/components/DayNavigator.tsx`, `frontend/src/components/TaskForm.tsx`, and `frontend/src/components/TaskList.tsx`.
-- [ ] T055 Implement responsive layout refinements for 360px and 1280px core flows in `frontend/src/pages/CalendarPage.tsx` and `frontend/src/components/TaskList.tsx`.
-- [ ] T056 Run the full SC-005 quality gates and document quickstart validation outcomes for all three user stories in `specs/001-calendar-task-agent/quickstart.md`.
-- [ ] T057 [P] Add SC-001 timing verification test using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) for event creation in `backend/tests/integration/test_event_create_latency.py`.
-- [ ] T058 [P] Add SC-002 timing verification tests using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) for event edit and delete flows in `backend/tests/integration/test_event_modify_latency.py`.
-- [ ] T059 [P] Add integration test validating FR-012 persistence after backend restart and page refresh in `backend/tests/integration/test_event_persistence_restart.py`.
-- [ ] T060 Verify and preserve FR-027 breaking-change approval artifacts (rationale, consumer impact, rollback/mitigation, reviewer sign-off) in `specs/001-calendar-task-agent/spec.md` and `specs/001-calendar-task-agent/plan.md` before implementation merge.
+- [x] T048 [P] Normalize event-vs-task terminology and remove agent references in user-facing/backend docs and API notes in `README.md` and `specs/001-calendar-task-agent/quickstart.md`, and document that existing task data is discarded on migrate (FR-026).
+- [x] T049 [P] Add or update backend health-check validation test for `/api/v1/health` in `backend/tests/integration/test_health_endpoint.py`.
+- [x] T050 [P] Add SC-003 timing verification test using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) in `backend/tests/integration/test_event_save_latency.py`.
+- [x] T051 Add frontend and backend quality-gate execution including lint/static analysis, type-checks, and full build validation (`ruff check .`, `mypy .`, `python manage.py check`, `npm run lint`, `npx tsc --noEmit`, `npm run build`) in `.github/workflows/ci-manual.yml`.
+- [x] T052 [P] Add frontend component accessibility tests for keyboard navigation, visible focus states, and labeled validation messages in `frontend/tests/component/taskAccessibility.spec.tsx`.
+- [x] T053 [P] Add responsive layout tests for core flows at 360px and 1280px viewports in `frontend/tests/component/calendarResponsive.spec.tsx`.
+- [x] T054 Implement accessibility semantics for core controls and form validation messaging in `frontend/src/components/DayNavigator.tsx`, `frontend/src/components/TaskForm.tsx`, and `frontend/src/components/TaskList.tsx`.
+- [x] T055 Implement responsive layout refinements for 360px and 1280px core flows in `frontend/src/pages/CalendarPage.tsx` and `frontend/src/components/TaskList.tsx`.
+- [x] T056 Run the full SC-005 quality gates and document quickstart validation outcomes for all three user stories in `specs/001-calendar-task-agent/quickstart.md`.
+- [x] T057 [P] Add SC-001 timing verification test using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) for event creation in `backend/tests/integration/test_event_create_latency.py`.
+- [x] T058 [P] Add SC-002 timing verification tests using measurement protocol (`localhost`, `n>=20`, submit-to-visible timing) for event edit and delete flows in `backend/tests/integration/test_event_modify_latency.py`.
+- [x] T059 [P] Add integration test validating FR-012 persistence after backend restart and page refresh in `backend/tests/integration/test_event_persistence_restart.py`.
+- [x] T060 Verify and preserve FR-027 breaking-change approval artifacts (rationale, consumer impact, rollback/mitigation, reviewer sign-off) in `specs/001-calendar-task-agent/spec.md` and `specs/001-calendar-task-agent/plan.md` before implementation merge.
 
 ---
 

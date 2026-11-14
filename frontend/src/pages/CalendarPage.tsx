@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import "./CalendarPage.css";
 
 import { DayNavigator } from "../components/DayNavigator";
 import { TaskForm } from "../components/TaskForm";
@@ -44,7 +45,7 @@ export function CalendarPage() {
   const heading = useMemo(() => `Tasks for ${selectedDate}`, [selectedDate]);
 
   return (
-    <main>
+    <main className="calendar-page" aria-label="calendar-page">
       <h1>SpeciaelFamily Calendar</h1>
       <DayNavigator selectedDate={selectedDate} onChange={setSelectedDate} />
       <h2>{heading}</h2>

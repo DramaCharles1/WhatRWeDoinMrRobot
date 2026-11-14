@@ -8,6 +8,7 @@ rules: `specs/001-calendar-task-agent/data-model.md`.
 
 Breaking-change note: This MVP replaces legacy Task routes/schema with Event-only contracts.
 `/tasks` and agent endpoints are intentionally not part of this feature's API surface.
+FR-026 note: legacy Task data is intentionally discarded when migrating to this MVP.
 
 ## Prerequisites
 
@@ -83,6 +84,45 @@ npm run coverage
 
 Expected outcome: all suites pass and coverage reports are produced.
 
+## SC-005 Quality-Gate Evidence
+
+Run these commands in sequence before merge:
+
+Backend (from `backend/`):
+
+```bash
+ruff check .
+mypy .
+python manage.py check
+pytest tests/unit tests/contract tests/integration
+```
+
+Frontend (from `frontend/`):
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm run test:component
+```
+
+Record outcomes for each user story validation stream:
+
+- US1 view/day navigation: pass all backend + frontend quality gates.
+- US2 create/edit: pass all backend + frontend quality gates.
+- US3 delete: pass all backend + frontend quality gates.
+
+Latest local execution evidence:
+
+- Frontend gates: `npm run lint`, `npm run typecheck`, `npm run build`, and
+    `npm run test:component` passed.
+- Backend checks: `python manage.py check` and
+    `pytest tests/unit tests/contract tests/integration` passed.
+- Backend lint/type gates currently fail on pre-existing repository issues:
+    Ruff (`I001` import ordering and multiple `E501` line-length findings in
+    existing files) and mypy module mapping (`calendar.views` vs
+    `apps.calendar.views`).
+
 ## Code Quality Checks
 
 Backend (from `backend/`):
@@ -98,7 +138,7 @@ Frontend (from `frontend/`):
 ```bash
 npm run lint
 npm run format:check
-npx tsc --noEmit
+npm run typecheck
 npm run build
 ```
 

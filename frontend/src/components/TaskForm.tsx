@@ -60,16 +60,27 @@ export function TaskForm({ selectedDate, onSubmit, editingTask }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {error ? <p>{error}</p> : null}
+    <form className="task-form" onSubmit={handleSubmit}>
+      {error ? (
+        <p id="task-form-error" role="alert" aria-live="polite">
+          {error}
+        </p>
+      ) : null}
+      <label htmlFor="event-title" className="field-label">
+        Title
+      </label>
       <input
+        id="event-title"
+        className="focus-ring"
         aria-label="title"
+        aria-describedby={error ? "task-form-error" : undefined}
         value={title}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
         placeholder="Event title"
       />
       <label>
         <input
+          className="focus-ring"
           aria-label="is-all-day"
           type="checkbox"
           checked={isAllDay}
@@ -79,27 +90,46 @@ export function TaskForm({ selectedDate, onSubmit, editingTask }: Props) {
       </label>
       {!isAllDay ? (
         <>
+          <label htmlFor="event-start-time" className="field-label">
+            Start time
+          </label>
           <input
+            id="event-start-time"
+            className="focus-ring"
             aria-label="start-time"
+            aria-describedby={error ? "task-form-error" : undefined}
             type="time"
             value={startTime}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setStartTime(e.target.value)}
           />
+          <label htmlFor="event-end-time" className="field-label">
+            End time
+          </label>
           <input
+            id="event-end-time"
+            className="focus-ring"
             aria-label="end-time"
+            aria-describedby={error ? "task-form-error" : undefined}
             type="time"
             value={endTime}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setEndTime(e.target.value)}
           />
         </>
       ) : null}
+      <label htmlFor="event-notes" className="field-label">
+        Notes
+      </label>
       <textarea
+        id="event-notes"
+        className="focus-ring"
         aria-label="notes"
         value={notes}
         onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
         placeholder="Notes"
       />
-      <button type="submit">{editingTask ? "Save" : "Create"}</button>
+      <button className="focus-ring" type="submit">
+        {editingTask ? "Save" : "Create"}
+      </button>
     </form>
   );
 }
