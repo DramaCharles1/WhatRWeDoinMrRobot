@@ -71,19 +71,19 @@ description: "Task list for implementing Simple Home Calendar MVP"
 
 ### Tests for User Story 1
 
-- [ ] T023 [P] [US1] Add backend contract tests for `GET /events?date=YYYY-MM-DD` success and invalid-date errors in `backend/tests/contract/test_events_list_contract.py`.
-- [ ] T024 [P] [US1] Add backend integration tests for date filtering and ordering rules (all-day first, start_time ascending, creation-order tie-break) in `backend/tests/integration/test_event_day_listing.py`.
-- [ ] T025 [P] [US1] Update frontend component tests for day navigation and empty-state rendering in `frontend/tests/component/calendarDayNavigation.spec.tsx`.
-- [ ] T026 [P] [US1] Update end-to-end navigation test for cross-date correctness in `frontend/tests/e2e/calendar-navigation.spec.ts`.
+- [X] T023 [P] [US1] Add backend contract tests for `GET /events?date=YYYY-MM-DD` success and invalid-date errors in `backend/tests/contract/test_events_list_contract.py`.
+- [X] T024 [P] [US1] Add backend integration tests for date filtering and ordering rules (all-day first, start_time ascending, creation-order tie-break) in `backend/tests/integration/test_event_day_listing.py`.
+- [X] T025 [P] [US1] Update frontend component tests for day navigation and empty-state rendering in `frontend/tests/component/calendarDayNavigation.spec.tsx`.
+- [X] T026 [P] [US1] Update end-to-end navigation test for cross-date correctness in `frontend/tests/e2e/calendar-navigation.spec.ts`.
 
 ### Implementation for User Story 1
 
-- [ ] T027 [US1] Implement day-list endpoint behavior returning `EventListResponse` for selected date (400 for missing/invalid date) in `backend/apps/calendar/views.py`.
-- [ ] T028 [P] [US1] Implement backend day-ordering service logic for FR-006a/FR-006b/FR-006c in `backend/apps/calendar/services/task_service.py`.
-- [ ] T029 [P] [US1] Implement day selector controls and selected-date state transitions in `frontend/src/components/DayNavigator.tsx`.
-- [ ] T030 [P] [US1] Implement selected-day event list rendering (all-day label or start-end times) in `frontend/src/components/TaskList.tsx`.
-- [ ] T031 [US1] Implement explicit empty-state component and copy for no-events day in `frontend/src/components/TaskListEmptyState.tsx`.
-- [ ] T032 [US1] Integrate day navigation and list fetching (with loading and error states) into page orchestration in `frontend/src/pages/CalendarPage.tsx`.
+- [X] T027 [US1] Implement day-list endpoint behavior returning `EventListResponse` for selected date (400 for missing/invalid date) in `backend/apps/calendar/views.py`.
+- [X] T028 [P] [US1] Implement backend day-ordering service logic for FR-006a/FR-006b/FR-006c in `backend/apps/calendar/services/task_service.py`.
+- [X] T029 [P] [US1] Implement day selector controls and selected-date state transitions in `frontend/src/components/DayNavigator.tsx`.
+- [X] T030 [P] [US1] Implement selected-day event list rendering (all-day label or start-end times) in `frontend/src/components/TaskList.tsx`.
+- [X] T031 [US1] Implement explicit empty-state component and copy for no-events day in `frontend/src/components/TaskListEmptyState.tsx`.
+- [X] T032 [US1] Integrate day navigation and list fetching (with loading and error states) into page orchestration in `frontend/src/pages/CalendarPage.tsx`.
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 

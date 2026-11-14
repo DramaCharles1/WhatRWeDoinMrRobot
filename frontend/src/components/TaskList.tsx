@@ -12,6 +12,9 @@ export function TaskList({ tasks, onEdit, onDelete }: Props) {
       {tasks.map((task) => (
         <li key={task.id}>
           <strong>{task.title}</strong>
+          <p>
+            {task.is_all_day ? "All day" : `${task.start_time ?? ""} - ${task.end_time ?? ""}`}
+          </p>
           <button onClick={() => onEdit(task)} type="button">
             Edit
           </button>

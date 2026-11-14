@@ -16,17 +16,27 @@ export function CalendarPage() {
   const [tasks, setTasks] = useState<EventDto[]>([]);
   const [editingTask, setEditingTask] = useState<EventDto | null>(null);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const refresh = useCallback(
     async (date = selectedDate) => {
-      const response = await listEventsByDate(date);
-      setTasks(response.events);
+      setIsLoading(true);
+      try {
+        const response = await listEventsByDate(date);
+        setTasks(response.events);
+        setError("");
+      } finally {
+        setIsLoading(false);
+      }
     },
     [selectedDate],
   );
 
   useEffect(() => {
-    refresh().catch((err: ApiError) => setError(err.message));
+    refresh().catch((err: ApiError) => {
+      setError(err.message);
+      setTasks([]);
+    });
   }, [refresh]);
 
   const heading = useMemo(() => `Tasks for ${selectedDate}`, [selectedDate]);
@@ -37,6 +47,7 @@ export function CalendarPage() {
       <DayNavigator selectedDate={selectedDate} onChange={setSelectedDate} />
       <h2>{heading}</h2>
       {error ? <p>{error}</p> : null}
+      {isLoading ? <p>Loading events...</p> : null}
       <TaskForm
         selectedDate={selectedDate}
         editingTask={editingTask}
@@ -56,8 +67,8 @@ export function CalendarPage() {
           }
         }}
       />
-      {tasks.length === 0 ? <TaskListEmptyState /> : null}
-      {tasks.length > 0 ? (
+      {!isLoading && tasks.length === 0 ? <TaskListEmptyState /> : null}
+      {!isLoading && tasks.length > 0 ? (
         <TaskList
           tasks={tasks}
           onEdit={(task) => setEditingTask(task)}

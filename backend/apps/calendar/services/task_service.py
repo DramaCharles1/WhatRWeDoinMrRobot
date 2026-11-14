@@ -2,11 +2,23 @@ from __future__ import annotations
 
 from datetime import date
 
+from django.db.models import Case, F, IntegerField, Value, When
+
 from apps.calendar.models import Event
 
 
 def list_events_by_date(selected_date: date):
-    return Event.objects.filter(event_date=selected_date).order_by("-is_all_day", "start_time", "created_at")
+    return (
+        Event.objects.filter(event_date=selected_date)
+        .annotate(
+            day_bucket=Case(
+                When(is_all_day=True, then=Value(0)),
+                default=Value(1),
+                output_field=IntegerField(),
+            )
+        )
+        .order_by("day_bucket", "start_time", "created_at", F("id").asc())
+    )
 
 
 def create_event(payload: dict) -> Event:

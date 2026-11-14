@@ -31,7 +31,7 @@ class EventListCreateView(APIView):
             validated_date = EventWriteSerializer().fields["event_date"].to_internal_value(date_param)
         except ValidationError:
             emit_event_failure_metric("list", "validation_error", getattr(request, "correlation_id", ""))
-            return error_response("validation_error", "date query parameter is required.")
+            return error_response("validation_error", "date query parameter must be a valid ISO date.")
 
         queryset = list_events_by_date(validated_date)
         payload = EventSerializer(queryset, many=True).data
