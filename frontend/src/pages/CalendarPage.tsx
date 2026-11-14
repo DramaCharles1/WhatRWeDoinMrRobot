@@ -19,12 +19,14 @@ export function CalendarPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const refresh = useCallback(
-    async (date = selectedDate) => {
+    async (date = selectedDate, clearError = true) => {
       setIsLoading(true);
       try {
         const response = await listEventsByDate(date);
         setTasks(response.events);
-        setError("");
+        if (clearError) {
+          setError("");
+        }
       } finally {
         setIsLoading(false);
       }
@@ -64,7 +66,7 @@ export function CalendarPage() {
           } catch (err) {
             const apiError = err as ApiError;
             setError(apiError.message);
-            await refresh(selectedDate);
+            await refresh(selectedDate, false);
           }
         }}
       />
@@ -80,7 +82,7 @@ export function CalendarPage() {
             } catch (err) {
               const apiError = err as ApiError;
               setError(apiError.message);
-              await refresh(selectedDate);
+              await refresh(selectedDate, false);
             }
           }}
         />

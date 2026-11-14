@@ -9,7 +9,13 @@ from services.observability import emit_event_failure_metric
 
 from .models import Event
 from .serializers import EventSerializer, EventUpdateSerializer, EventWriteSerializer
-from .services.task_service import create_event, delete_event, list_events_by_date, update_event
+from .services.task_service import (
+    DeleteEventError,
+    create_event,
+    delete_event,
+    list_events_by_date,
+    update_event,
+)
 
 
 class HealthView(APIView):
@@ -82,9 +88,9 @@ class EventDetailView(APIView):
     def delete(self, request, event_id):
         try:
             delete_event(event_id)
-        except Event.DoesNotExist:
+        except DeleteEventError as exc:
             emit_event_failure_metric("delete", "not_found", getattr(request, "correlation_id", ""))
-            return error_response("not_found", "Event not found.")
+            return error_response("not_found", str(exc))
 
         audit_event_action("delete", str(event_id), getattr(request, "correlation_id", None))
         return Response(status=status.HTTP_204_NO_CONTENT)

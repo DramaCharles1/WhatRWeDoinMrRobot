@@ -18,7 +18,7 @@ export function TaskList({ tasks, onEdit, onDelete }: Props) {
           <button aria-label={`edit-${task.id}`} onClick={() => onEdit(task)} type="button">
             Edit
           </button>
-          <button onClick={() => onDelete(task.id)} type="button">
+          <button aria-label={`delete-${task.id}`} onClick={() => onDelete(task.id)} type="button">
             Delete
           </button>
         </li>

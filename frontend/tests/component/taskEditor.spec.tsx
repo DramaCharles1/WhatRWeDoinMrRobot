@@ -3,8 +3,23 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { CalendarPage } from "../../src/pages/CalendarPage";
 import { TaskForm } from "../../src/components/TaskForm";
 import type { EventDto } from "../../src/types/api";
+
+const { mockListEventsByDate, mockCreateEvent, mockUpdateEvent, mockDeleteEvent } = vi.hoisted(() => ({
+  mockListEventsByDate: vi.fn(),
+  mockCreateEvent: vi.fn(),
+  mockUpdateEvent: vi.fn(),
+  mockDeleteEvent: vi.fn(),
+}));
+
+vi.mock("../../src/services/tasksService", () => ({
+  listEventsByDate: mockListEventsByDate,
+  createEvent: mockCreateEvent,
+  updateEvent: mockUpdateEvent,
+  deleteEvent: mockDeleteEvent,
+}));
 
 afterEach(() => {
   cleanup();
@@ -86,6 +101,41 @@ describe("task editor", () => {
     expect(screen.getByText("End time must be later than start time.")).toBeTruthy();
     await waitFor(() => {
       expect(onSubmit).not.toHaveBeenCalled();
+    });
+  });
+
+  it("shows operation-specific delete error message when delete fails", async () => {
+    mockListEventsByDate.mockResolvedValue({
+      date: "2026-11-14",
+      events: [
+        {
+          id: "a5c76da3-2729-4bc0-84b3-b9f2737e42dd",
+          title: "To delete",
+          event_date: "2026-11-14",
+          is_all_day: true,
+          start_time: null,
+          end_time: null,
+          notes: "",
+          created_at: "2026-11-14T09:00:00Z",
+          updated_at: "2026-11-14T09:00:00Z",
+        },
+      ],
+    });
+    mockDeleteEvent.mockRejectedValue({
+      code: "not_found",
+      message: "Delete failed: Event not found.",
+    });
+
+    render(<CalendarPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText("To delete")).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "delete-a5c76da3-2729-4bc0-84b3-b9f2737e42dd" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Delete failed: Event not found.")).toBeTruthy();
     });
   });
 });

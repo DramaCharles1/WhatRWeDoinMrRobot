@@ -7,6 +7,10 @@ from django.db.models import Case, F, IntegerField, Value, When
 from apps.calendar.models import Event
 
 
+class DeleteEventError(Exception):
+    pass
+
+
 def list_events_by_date(selected_date: date):
     return (
         Event.objects.filter(event_date=selected_date)
@@ -34,5 +38,6 @@ def update_event(event_id, updates: dict) -> Event:
 
 
 def delete_event(event_id) -> None:
-    event = Event.objects.get(pk=event_id)
-    event.delete()
+    deleted, _ = Event.objects.filter(pk=event_id).delete()
+    if deleted == 0:
+        raise DeleteEventError("Delete failed: Event not found.")

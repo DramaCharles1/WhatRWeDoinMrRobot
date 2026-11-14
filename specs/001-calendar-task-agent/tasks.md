@@ -122,15 +122,15 @@ description: "Task list for implementing Simple Home Calendar MVP"
 
 ### Tests for User Story 3
 
-- [ ] T042 [P] [US3] Add backend contract tests for `DELETE /events/{eventId}` 204 and 404 responses in `backend/tests/contract/test_events_delete_contract.py`.
-- [ ] T043 [P] [US3] Add backend integration tests for delete success, not-found, and operation-specific failure message behavior in `backend/tests/integration/test_event_delete_flows.py`.
-- [ ] T044 [P] [US3] Add frontend component tests for delete interaction and error message display in `frontend/tests/component/taskEditor.spec.tsx`.
+- [X] T042 [P] [US3] Add backend contract tests for `DELETE /events/{eventId}` 204 and 404 responses in `backend/tests/contract/test_events_delete_contract.py`.
+- [X] T043 [P] [US3] Add backend integration tests for delete success, not-found, and operation-specific failure message behavior in `backend/tests/integration/test_event_delete_flows.py`.
+- [X] T044 [P] [US3] Add frontend component tests for delete interaction and error message display in `frontend/tests/component/taskEditor.spec.tsx`.
 
 ### Implementation for User Story 3
 
-- [ ] T045 [US3] Implement delete operation behavior (404 for unknown id) and operation-specific error messaging in `backend/apps/calendar/services/task_service.py`.
-- [ ] T046 [US3] Implement delete endpoint handling aligned with OpenAPI responses in `backend/apps/calendar/views.py`.
-- [ ] T047 [US3] Integrate delete action with selected-day list update in `frontend/src/pages/CalendarPage.tsx`.
+- [X] T045 [US3] Implement delete operation behavior (404 for unknown id) and operation-specific error messaging in `backend/apps/calendar/services/task_service.py`.
+- [X] T046 [US3] Implement delete endpoint handling aligned with OpenAPI responses in `backend/apps/calendar/views.py`.
+- [X] T047 [US3] Integrate delete action with selected-day list update in `frontend/src/pages/CalendarPage.tsx`.
 
 **Checkpoint**: All user stories are independently functional and testable.
 
