@@ -98,3 +98,28 @@ class EventUpdateSerializer(EventWriteSerializer):
         attrs["start_time"] = validated["start_time"]
         attrs["end_time"] = validated["end_time"]
         return attrs
+
+
+class EventRangeQuerySerializer(serializers.Serializer):
+    start_date = serializers.DateField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"])
+    end_date = serializers.DateField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"])
+
+    def validate(self, attrs):
+        start_date = attrs["start_date"]
+        end_date = attrs["end_date"]
+        if end_date < start_date:
+            raise serializers.ValidationError(
+                {"end_date": ["end_date must be on or after start_date."]}
+            )
+        return attrs
+
+
+class DayEventsSerializer(serializers.Serializer):
+    date = serializers.DateField(format="%Y-%m-%d")
+    events = EventSerializer(many=True)
+
+
+class EventRangeResponseSerializer(serializers.Serializer):
+    start_date = serializers.DateField(format="%Y-%m-%d")
+    end_date = serializers.DateField(format="%Y-%m-%d")
+    days = DayEventsSerializer(many=True)

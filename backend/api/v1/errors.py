@@ -4,6 +4,8 @@ from rest_framework.response import Response
 ERROR_STATUS = {
     "validation_error": status.HTTP_400_BAD_REQUEST,
     "not_found": status.HTTP_404_NOT_FOUND,
+    "service_unavailable": status.HTTP_503_SERVICE_UNAVAILABLE,
+    "timeout": status.HTTP_503_SERVICE_UNAVAILABLE,
 }
 
 

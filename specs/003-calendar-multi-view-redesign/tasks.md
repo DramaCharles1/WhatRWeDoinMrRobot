@@ -32,18 +32,18 @@
 
 **⚠️ CRITICAL**: No user story work should begin until this phase is complete.
 
-- [ ] T006 Implement range query request/response serializers for `/events/range` in `backend/apps/calendar/serializers.py`
-- [ ] T007 Implement `/events/range` view behavior and validation in `backend/apps/calendar/views.py`
-- [ ] T008 Wire `/events/range` route in `backend/api/v1/urls.py`
-- [ ] T009 [P] Implement range-read service helper with documented timeout and bounded retry behavior in `backend/apps/calendar/services/range_queries.py`
-- [ ] T010 [P] Emit structured logs and clear error messages for range-read success/failure paths in `backend/apps/calendar/views.py`
-- [ ] T011 [P] Add API schema entries for `/events/range` and error shapes in `specs/003-calendar-multi-view-redesign/contracts/calendar-views-api.yaml`
-- [ ] T012 [P] Extend API DTO types to include `EventRangeResponse` and `DayEvents` in `frontend/src/types/api.ts`
-- [ ] T013 [P] Add range list client method and error propagation in `frontend/src/services/tasksService.ts`
-- [ ] T014 Create calendar boundary helpers (week/month/day ranges) in `frontend/src/services/calendarDateRanges.ts`
-- [ ] T015 Create day-bucket mapping helper that enforces verbatim constraints "Every event for `date` must be represented in `events` even if compact rendering truncates inline display." and "`overflowCount` must be zero in day view because full-day listing is required." in `frontend/src/services/calendarBuckets.ts`
-- [ ] T016 Add backend contract coverage for `/events/range` success and invalid-parameter cases in `backend/tests/contract/test_events_list_contract.py`
-- [ ] T017 Add backend integration coverage for timeout/retry execution paths and logged failure context in `backend/tests/integration/test_event_range_resilience.py`
+- [X] T006 Implement range query request/response serializers for `/events/range` in `backend/apps/calendar/serializers.py`
+- [X] T007 Implement `/events/range` view behavior and validation in `backend/apps/calendar/views.py`
+- [X] T008 Wire `/events/range` route in `backend/api/v1/urls.py`
+- [X] T009 [P] Implement range-read service helper with documented timeout and bounded retry behavior in `backend/apps/calendar/services/range_queries.py`
+- [X] T010 [P] Emit structured logs and clear error messages for range-read success/failure paths in `backend/apps/calendar/views.py`
+- [X] T011 [P] Add API schema entries for `/events/range` and error shapes in `specs/003-calendar-multi-view-redesign/contracts/calendar-views-api.yaml`
+- [X] T012 [P] Extend API DTO types to include `EventRangeResponse` and `DayEvents` in `frontend/src/types/api.ts`
+- [X] T013 [P] Add range list client method and error propagation in `frontend/src/services/tasksService.ts`
+- [X] T014 Create calendar boundary helpers (week/month/day ranges) in `frontend/src/services/calendarDateRanges.ts`
+- [X] T015 Create day-bucket mapping helper that enforces verbatim constraints "Every event for `date` must be represented in `events` even if compact rendering truncates inline display." and "`overflowCount` must be zero in day view because full-day listing is required." in `frontend/src/services/calendarBuckets.ts`
+- [X] T016 Add backend contract coverage for `/events/range` success and invalid-parameter cases in `backend/tests/contract/test_events_list_contract.py`
+- [X] T017 Add backend integration coverage for timeout/retry execution paths and logged failure context in `backend/tests/integration/test_event_range_resilience.py`
 
 **Checkpoint**: Shared range-read API, resilience, observability, and frontend data plumbing are ready.
 
