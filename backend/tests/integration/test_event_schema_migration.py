@@ -1,5 +1,5 @@
 import pytest
-from django.db import connection, IntegrityError
+from django.db import IntegrityError, connection
 
 from apps.calendar.models import Event
 

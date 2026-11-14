@@ -28,8 +28,12 @@ def test_day_listing_orders_all_day_then_start_time_then_creation_order() -> Non
     client = APIClient()
     day = dt.date(2026, 11, 14)
 
-    all_day_1 = Event.objects.create(title="All day first", event_date=day, is_all_day=True, notes="")
-    all_day_2 = Event.objects.create(title="All day second", event_date=day, is_all_day=True, notes="")
+    all_day_1 = Event.objects.create(
+        title="All day first", event_date=day, is_all_day=True, notes=""
+    )
+    all_day_2 = Event.objects.create(
+        title="All day second", event_date=day, is_all_day=True, notes=""
+    )
 
     early = Event.objects.create(
         title="09:00",

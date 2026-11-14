@@ -22,10 +22,17 @@ class Event(models.Model):
             models.CheckConstraint(
                 name="chk_event_all_day_or_timed",
                 condition=(
-                    models.Q(("end_time__isnull", True), ("is_all_day", True), ("start_time__isnull", True))
-                    |
-                    (
-                        models.Q(("end_time__isnull", False), ("is_all_day", False), ("start_time__isnull", False))
+                    models.Q(
+                        ("end_time__isnull", True),
+                        ("is_all_day", True),
+                        ("start_time__isnull", True),
+                    )
+                    | (
+                        models.Q(
+                            ("end_time__isnull", False),
+                            ("is_all_day", False),
+                            ("start_time__isnull", False),
+                        )
                         & models.Q(end_time__gt=models.F("start_time"))
                     )
                 ),

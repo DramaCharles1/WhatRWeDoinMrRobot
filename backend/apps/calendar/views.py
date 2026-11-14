@@ -30,14 +30,22 @@ class EventListCreateView(APIView):
     def get(self, request):
         date_param = request.query_params.get("date")
         if not date_param:
-            emit_event_failure_metric("list", "validation_error", getattr(request, "correlation_id", ""))
+            emit_event_failure_metric(
+                "list", "validation_error", getattr(request, "correlation_id", "")
+            )
             return error_response("validation_error", "date query parameter is required.")
 
         try:
-            validated_date = EventWriteSerializer().fields["event_date"].to_internal_value(date_param)
+            validated_date = (
+                EventWriteSerializer().fields["event_date"].to_internal_value(date_param)
+            )
         except ValidationError:
-            emit_event_failure_metric("list", "validation_error", getattr(request, "correlation_id", ""))
-            return error_response("validation_error", "date query parameter must be a valid ISO date.")
+            emit_event_failure_metric(
+                "list", "validation_error", getattr(request, "correlation_id", "")
+            )
+            return error_response(
+                "validation_error", "date query parameter must be a valid ISO date."
+            )
 
         queryset = list_events_by_date(validated_date)
         payload = EventSerializer(queryset, many=True).data
@@ -48,12 +56,23 @@ class EventListCreateView(APIView):
         if not serializer.is_valid():
             details = serializer.errors
             if "title" in details and "Title is required." in details["title"]:
-                emit_event_failure_metric("create", "validation_error", getattr(request, "correlation_id", ""))
+                emit_event_failure_metric(
+                    "create", "validation_error", getattr(request, "correlation_id", "")
+                )
                 return error_response("validation_error", "Title is required.", details)
-            if "end_time" in details and "End time must be later than start time." in details["end_time"]:
-                emit_event_failure_metric("create", "validation_error", getattr(request, "correlation_id", ""))
-                return error_response("validation_error", "End time must be later than start time.", details)
-            emit_event_failure_metric("create", "validation_error", getattr(request, "correlation_id", ""))
+            if (
+                "end_time" in details
+                and "End time must be later than start time." in details["end_time"]
+            ):
+                emit_event_failure_metric(
+                    "create", "validation_error", getattr(request, "correlation_id", "")
+                )
+                return error_response(
+                    "validation_error", "End time must be later than start time.", details
+                )
+            emit_event_failure_metric(
+                "create", "validation_error", getattr(request, "correlation_id", "")
+            )
             return error_response("validation_error", "Validation failed.", details)
 
         event = create_event(serializer.validated_data)
@@ -73,12 +92,23 @@ class EventDetailView(APIView):
         if not serializer.is_valid():
             details = serializer.errors
             if "title" in details and "Title is required." in details["title"]:
-                emit_event_failure_metric("update", "validation_error", getattr(request, "correlation_id", ""))
+                emit_event_failure_metric(
+                    "update", "validation_error", getattr(request, "correlation_id", "")
+                )
                 return error_response("validation_error", "Title is required.", details)
-            if "end_time" in details and "End time must be later than start time." in details["end_time"]:
-                emit_event_failure_metric("update", "validation_error", getattr(request, "correlation_id", ""))
-                return error_response("validation_error", "End time must be later than start time.", details)
-            emit_event_failure_metric("update", "validation_error", getattr(request, "correlation_id", ""))
+            if (
+                "end_time" in details
+                and "End time must be later than start time." in details["end_time"]
+            ):
+                emit_event_failure_metric(
+                    "update", "validation_error", getattr(request, "correlation_id", "")
+                )
+                return error_response(
+                    "validation_error", "End time must be later than start time.", details
+                )
+            emit_event_failure_metric(
+                "update", "validation_error", getattr(request, "correlation_id", "")
+            )
             return error_response("validation_error", "Validation failed.", details)
 
         updated = update_event(event_id, serializer.validated_data)

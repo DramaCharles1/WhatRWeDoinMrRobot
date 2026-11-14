@@ -29,8 +29,12 @@ class EventWriteSerializer(serializers.ModelSerializer):
     )
     event_date = serializers.DateField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"])
     is_all_day = serializers.BooleanField(required=True)
-    start_time = serializers.TimeField(format="%H:%M", input_formats=["%H:%M"], required=False, allow_null=True)
-    end_time = serializers.TimeField(format="%H:%M", input_formats=["%H:%M"], required=False, allow_null=True)
+    start_time = serializers.TimeField(
+        format="%H:%M", input_formats=["%H:%M"], required=False, allow_null=True
+    )
+    end_time = serializers.TimeField(
+        format="%H:%M", input_formats=["%H:%M"], required=False, allow_null=True
+    )
     notes = serializers.CharField(max_length=2000, required=False, allow_blank=True)
 
     class Meta:
@@ -54,14 +58,18 @@ class EventWriteSerializer(serializers.ModelSerializer):
             return attrs
 
         if start_time is None or end_time is None:
-            raise serializers.ValidationError({
-                "end_time": ["End time must be later than start time."],
-            })
+            raise serializers.ValidationError(
+                {
+                    "end_time": ["End time must be later than start time."],
+                }
+            )
 
         if end_time <= start_time:
-            raise serializers.ValidationError({
-                "end_time": ["End time must be later than start time."],
-            })
+            raise serializers.ValidationError(
+                {
+                    "end_time": ["End time must be later than start time."],
+                }
+            )
 
         return attrs
 

@@ -41,11 +41,18 @@ class Migration(migrations.Migration):
                     models.CheckConstraint(
                         condition=(
                             (
-                                models.Q(("end_time__isnull", True), ("is_all_day", True), ("start_time__isnull", True))
+                                models.Q(
+                                    ("end_time__isnull", True),
+                                    ("is_all_day", True),
+                                    ("start_time__isnull", True),
+                                )
                             )
-                            |
-                            (
-                                models.Q(("end_time__isnull", False), ("is_all_day", False), ("start_time__isnull", False))
+                            | (
+                                models.Q(
+                                    ("end_time__isnull", False),
+                                    ("is_all_day", False),
+                                    ("start_time__isnull", False),
+                                )
                                 & models.Q(("end_time__gt", models.F("start_time")))
                             )
                         ),

@@ -3,7 +3,9 @@ from pathlib import Path
 
 def _resolve_contract_path() -> Path:
     # Support local monorepo runs and containerized backend-only mounts.
-    explicit = Path(__file__).resolve().parents[3] / "specs/001-calendar-task-agent/contracts/openapi.yaml"
+    explicit = (
+        Path(__file__).resolve().parents[3] / "specs/001-calendar-task-agent/contracts/openapi.yaml"
+    )
     if explicit.exists():
         return explicit
 
