@@ -30,12 +30,12 @@
 
 **⚠️ CRITICAL**: No user story implementation should begin until this phase is complete.
 
-- [ ] T004 Create browser fixture and base navigation helper in `frontend/tests/e2e/support/fixtures.ts`
-- [ ] T005 [P] Create event form interaction helpers in `frontend/tests/e2e/support/eventForm.ts`
-- [ ] T006 [P] Create day-list assertion helpers in `frontend/tests/e2e/support/dayListAssertions.ts` with explicit checks quoting constraints: "A created event must appear in the listing for its date." and "A deleted event must not appear in subsequent listing reads."
-- [ ] T007 Create backend cleanup helper in `frontend/tests/e2e/support/eventCleanup.ts` that enforces data-model validation rules verbatim: "`title` must be non-empty.", "For timed events, both `startTime` and `endTime` are required.", and "For all-day events, time fields are not required."
-- [ ] T008 Create deterministic test-data generator for titles/dates/times in `frontend/tests/e2e/support/testData.ts`
-- [ ] T009 Add common stage-aware error wrapper for create/retrieve/delete diagnostics in `frontend/tests/e2e/support/stageReporting.ts`
+- [X] T004 Create browser fixture and base navigation helper in `frontend/tests/e2e/support/fixtures.ts`
+- [X] T005 [P] Create event form interaction helpers in `frontend/tests/e2e/support/eventForm.ts`
+- [X] T006 [P] Create day-list assertion helpers in `frontend/tests/e2e/support/dayListAssertions.ts` with explicit checks quoting constraints: "A created event must appear in the listing for its date." and "A deleted event must not appear in subsequent listing reads."
+- [X] T007 Create backend cleanup helper in `frontend/tests/e2e/support/eventCleanup.ts` that enforces data-model validation rules verbatim: "`title` must be non-empty.", "For timed events, both `startTime` and `endTime` are required.", and "For all-day events, time fields are not required."
+- [X] T008 Create deterministic test-data generator for titles/dates/times in `frontend/tests/e2e/support/testData.ts`
+- [X] T009 Add common stage-aware error wrapper for create/retrieve/delete diagnostics in `frontend/tests/e2e/support/stageReporting.ts`
 
 **Checkpoint**: Shared Playwright infrastructure and deterministic cleanup are ready.
 
