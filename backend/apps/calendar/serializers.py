@@ -21,7 +21,12 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class EventWriteSerializer(serializers.ModelSerializer):
-    title = serializers.CharField(max_length=200, allow_blank=False, trim_whitespace=True)
+    title = serializers.CharField(
+        max_length=200,
+        allow_blank=False,
+        trim_whitespace=True,
+        error_messages={"blank": "Title is required."},
+    )
     event_date = serializers.DateField(format="%Y-%m-%d", input_formats=["%Y-%m-%d"])
     is_all_day = serializers.BooleanField(required=True)
     start_time = serializers.TimeField(format="%H:%M", input_formats=["%H:%M"], required=False, allow_null=True)

@@ -97,18 +97,18 @@ description: "Task list for implementing Simple Home Calendar MVP"
 
 ### Tests for User Story 2
 
-- [ ] T033 [P] [US2] Add backend contract tests for `POST /events` and `PATCH /events/{eventId}` success and validation failures (including 201 for a duplicate title on the same day per FR-014) in `backend/tests/contract/test_events_write_contract.py`.
-- [ ] T034 [P] [US2] Add backend integration tests for create/edit validation rules including title trimming, all-day time clearing, and end-after-start enforcement in `backend/tests/integration/test_event_crud_flows.py`.
-- [ ] T035 [P] [US2] Add backend integration tests asserting exact canonical messages `Title is required.` and `End time must be later than start time.` in `backend/tests/integration/test_event_validation_messages.py`.
-- [ ] T036 [P] [US2] Update frontend component tests for create/edit form behavior and validation message rendering in `frontend/tests/component/taskEditor.spec.tsx`.
+- [X] T033 [P] [US2] Add backend contract tests for `POST /events` and `PATCH /events/{eventId}` success and validation failures (including 201 for a duplicate title on the same day per FR-014) in `backend/tests/contract/test_events_write_contract.py`.
+- [X] T034 [P] [US2] Add backend integration tests for create/edit validation rules including title trimming, all-day time clearing, and end-after-start enforcement in `backend/tests/integration/test_event_crud_flows.py`.
+- [X] T035 [P] [US2] Add backend integration tests asserting exact canonical messages `Title is required.` and `End time must be later than start time.` in `backend/tests/integration/test_event_validation_messages.py`.
+- [X] T036 [P] [US2] Update frontend component tests for create/edit form behavior and validation message rendering in `frontend/tests/component/taskEditor.spec.tsx`.
 
 ### Implementation for User Story 2
 
-- [ ] T037 [US2] Implement create/update service operations enforcing FR-014 and FR-016 through FR-023 (no uniqueness check, no `creator_name`) in `backend/apps/calendar/services/task_service.py`.
-- [ ] T038 [US2] Implement create/update handlers for events endpoints (remove IntegrityError/409 duplicate handling) in `backend/apps/calendar/views.py`.
-- [ ] T039 [P] [US2] Implement event form fields and all-day/timed input toggling in `frontend/src/components/TaskForm.tsx`.
-- [ ] T040 [P] [US2] Implement event edit interaction wiring in `frontend/src/components/TaskList.tsx`.
-- [ ] T041 [US2] Integrate create/edit mutations with selected-day refresh behavior in `frontend/src/pages/CalendarPage.tsx`.
+- [X] T037 [US2] Implement create/update service operations enforcing FR-014 and FR-016 through FR-023 (no uniqueness check, no `creator_name`) in `backend/apps/calendar/services/task_service.py`.
+- [X] T038 [US2] Implement create/update handlers for events endpoints (remove IntegrityError/409 duplicate handling) in `backend/apps/calendar/views.py`.
+- [X] T039 [P] [US2] Implement event form fields and all-day/timed input toggling in `frontend/src/components/TaskForm.tsx`.
+- [X] T040 [P] [US2] Implement event edit interaction wiring in `frontend/src/components/TaskList.tsx`.
+- [X] T041 [US2] Integrate create/edit mutations with selected-day refresh behavior in `frontend/src/pages/CalendarPage.tsx`.
 
 **Checkpoint**: User Stories 1 and 2 both function independently and together.
 

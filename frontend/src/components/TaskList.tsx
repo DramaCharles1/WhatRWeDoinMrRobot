@@ -15,7 +15,7 @@ export function TaskList({ tasks, onEdit, onDelete }: Props) {
           <p>
             {task.is_all_day ? "All day" : `${task.start_time ?? ""} - ${task.end_time ?? ""}`}
           </p>
-          <button onClick={() => onEdit(task)} type="button">
+          <button aria-label={`edit-${task.id}`} onClick={() => onEdit(task)} type="button">
             Edit
           </button>
           <button onClick={() => onDelete(task.id)} type="button">

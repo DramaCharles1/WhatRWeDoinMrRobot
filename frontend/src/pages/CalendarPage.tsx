@@ -52,6 +52,7 @@ export function CalendarPage() {
         selectedDate={selectedDate}
         editingTask={editingTask}
         onSubmit={async (input) => {
+          setError("");
           try {
             if (editingTask) {
               await updateEvent(editingTask.id, input);
