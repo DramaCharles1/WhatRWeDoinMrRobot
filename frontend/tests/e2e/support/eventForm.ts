@@ -48,6 +48,15 @@ export async function createAllDayEvent(page: Page, input: AllDayEventInput): Pr
   await expect(page.getByLabel("title")).toHaveValue("");
 }
 
+export async function createAllDayEventWithSaveFlow(
+  page: Page,
+  input: AllDayEventInput,
+): Promise<void> {
+  await setAllDay(page, true);
+  await fillCommonEventFields(page, input);
+  await submitEventForm(page);
+}
+
 export async function createTimedEvent(page: Page, input: TimedEventInput): Promise<void> {
   await setAllDay(page, false);
   await fillCommonEventFields(page, input);

@@ -49,15 +49,15 @@
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Add all-day event creation E2E scenario in `frontend/tests/e2e/event-create-all-day.spec.ts`
-- [ ] T011 [US1] Add all-day persistence-after-refresh scenario in `frontend/tests/e2e/event-create-all-day.spec.ts`
+- [X] T010 [P] [US1] Add all-day event creation E2E scenario in `frontend/tests/e2e/event-create-all-day.spec.ts`
+- [X] T011 [US1] Add all-day persistence-after-refresh scenario in `frontend/tests/e2e/event-create-all-day.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Extend page interaction helper for all-day toggle and save flow in `frontend/tests/e2e/support/eventForm.ts`
-- [ ] T013 [P] [US1] Extend assertion helper for all-day row verification in `frontend/tests/e2e/support/dayListAssertions.ts`
-- [ ] T014 [US1] Wire stage-level failure reporting (`create` and `retrieve/list`) for US1 scenarios in `frontend/tests/e2e/event-create-all-day.spec.ts`
-- [ ] T015 [US1] Add per-test cleanup hook for all-day events using shared cleanup helper in `frontend/tests/e2e/event-create-all-day.spec.ts`
+- [X] T012 [P] [US1] Extend page interaction helper for all-day toggle and save flow in `frontend/tests/e2e/support/eventForm.ts`
+- [X] T013 [P] [US1] Extend assertion helper for all-day row verification in `frontend/tests/e2e/support/dayListAssertions.ts`
+- [X] T014 [US1] Wire stage-level failure reporting (`create` and `retrieve/list`) for US1 scenarios in `frontend/tests/e2e/event-create-all-day.spec.ts`
+- [X] T015 [US1] Add per-test cleanup hook for all-day events using shared cleanup helper in `frontend/tests/e2e/event-create-all-day.spec.ts`
 
 **Checkpoint**: User Story 1 is independently testable and satisfies MVP scope.
 

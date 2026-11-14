@@ -17,8 +17,14 @@ export async function assertEventAbsentInListing(page: Page, title: string): Pro
 export async function assertAllDayEventInListing(page: Page, title: string): Promise<void> {
   const row = eventListItemByTitle(page, title);
   await expect(row).toBeVisible();
+  await expect(row.locator("strong")).toHaveText(title);
   await expect(row.getByText("All day")).toBeVisible();
   // "A created event must appear in the listing for its date."
+}
+
+export async function assertAllDayEventAfterRefresh(page: Page, title: string): Promise<void> {
+  await page.reload();
+  await assertAllDayEventInListing(page, title);
 }
 
 export async function assertTimedEventInListing(
