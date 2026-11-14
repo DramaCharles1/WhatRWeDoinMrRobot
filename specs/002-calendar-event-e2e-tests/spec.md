@@ -8,6 +8,12 @@
 
 **Input**: User description: "create end to end tests using the frontend and the backend. Create all day event, create time event, delete event should be tested."
 
+## Clarifications
+
+### Session 2026-11-14
+
+- Q: Where must instructions for running end-to-end tests be documented? -> A: Document how to run E2E tests in `README.md`.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Create All-Day Event Journey (Priority: P1)
@@ -73,6 +79,7 @@ As a calendar user, I can delete an existing event and confirm it no longer appe
 - **FR-006**: The system MUST verify that a deleted event is absent from subsequent day-level event retrieval and display.
 - **FR-007**: Each end-to-end test MUST start from a known data state and clean up created data so runs are repeatable.
 - **FR-008**: End-to-end test results MUST clearly indicate which user journey failed and whether the failure occurred during create, list, or delete behavior.
+- **FR-009**: Project documentation MUST include instructions in `README.md` for how to run end-to-end tests, including required prerequisites and the execution command.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -88,6 +95,7 @@ As a calendar user, I can delete an existing event and confirm it no longer appe
 - **SC-002**: In a clean environment, the end-to-end suite passes all required event journey tests in at least 95% of repeated runs.
 - **SC-003**: For each required journey, test failures identify the failed behavior stage (creation, retrieval, or deletion) within the test report.
 - **SC-004**: During release validation, stakeholders can confirm that created events appear correctly and deleted events remain absent without manual database inspection.
+- **SC-005**: Contributors can locate and execute the E2E test run instructions from `README.md` in under 2 minutes during onboarding validation.
 
 ## Assumptions
 
