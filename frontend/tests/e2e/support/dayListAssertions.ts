@@ -35,8 +35,19 @@ export async function assertTimedEventInListing(
 ): Promise<void> {
   const row = eventListItemByTitle(page, title);
   await expect(row).toBeVisible();
+  await expect(row.locator("strong")).toHaveText(title);
   await expect(row.getByText(`${startTime} - ${endTime}`)).toBeVisible();
   // "A created event must appear in the listing for its date."
+}
+
+export async function assertTimedEventAfterRefresh(
+  page: Page,
+  title: string,
+  startTime: string,
+  endTime: string,
+): Promise<void> {
+  await page.reload();
+  await assertTimedEventInListing(page, title, startTime, endTime);
 }
 
 export async function assertDeletedEventNotInListing(page: Page, title: string): Promise<void> {

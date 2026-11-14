@@ -71,15 +71,15 @@
 
 ### Tests for User Story 2
 
-- [ ] T016 [P] [US2] Add timed event creation E2E scenario in `frontend/tests/e2e/event-create-timed.spec.ts`
-- [ ] T017 [US2] Add timed event persistence-after-refresh scenario in `frontend/tests/e2e/event-create-timed.spec.ts`
+- [X] T016 [P] [US2] Add timed event creation E2E scenario in `frontend/tests/e2e/event-create-timed.spec.ts`
+- [X] T017 [US2] Add timed event persistence-after-refresh scenario in `frontend/tests/e2e/event-create-timed.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T018 [P] [US2] Extend form helper with timed start/end entry paths in `frontend/tests/e2e/support/eventForm.ts`
-- [ ] T019 [P] [US2] Extend listing assertions for exact time-range display in `frontend/tests/e2e/support/dayListAssertions.ts`
-- [ ] T020 [US2] Enforce timed-event constraint in test flow with explicit check for "For timed events, both `startTime` and `endTime` are required." in `frontend/tests/e2e/event-create-timed.spec.ts`
-- [ ] T021 [US2] Wire stage-level failure reporting (`create` and `retrieve/list`) and cleanup hooks for US2 in `frontend/tests/e2e/event-create-timed.spec.ts`
+- [X] T018 [P] [US2] Extend form helper with timed start/end entry paths in `frontend/tests/e2e/support/eventForm.ts`
+- [X] T019 [P] [US2] Extend listing assertions for exact time-range display in `frontend/tests/e2e/support/dayListAssertions.ts`
+- [X] T020 [US2] Enforce timed-event constraint in test flow with explicit check for "For timed events, both `startTime` and `endTime` are required." in `frontend/tests/e2e/event-create-timed.spec.ts`
+- [X] T021 [US2] Wire stage-level failure reporting (`create` and `retrieve/list`) and cleanup hooks for US2 in `frontend/tests/e2e/event-create-timed.spec.ts`
 
 **Checkpoint**: User Story 2 is independently testable without dependence on US1 execution.
 

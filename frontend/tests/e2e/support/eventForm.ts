@@ -63,3 +63,13 @@ export async function createTimedEvent(page: Page, input: TimedEventInput): Prom
   await fillTimedFields(page, input);
   await submitEventForm(page);
 }
+
+export async function createTimedEventWithSaveFlow(
+  page: Page,
+  input: TimedEventInput,
+): Promise<void> {
+  await setAllDay(page, false);
+  await fillCommonEventFields(page, input);
+  await fillTimedFields(page, input);
+  await submitEventForm(page);
+}
