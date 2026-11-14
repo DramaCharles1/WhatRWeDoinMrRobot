@@ -110,9 +110,9 @@
 
 **Purpose**: Finalize documentation and ensure repeatable execution in local workflows.
 
-- [ ] T027 [P] Update frontend test command documentation for Playwright in `README.md`
-- [ ] T028 [P] Align quickstart run commands and troubleshooting with final scripts in `specs/002-calendar-event-e2e-tests/quickstart.md`
-- [ ] T029 Run complete E2E validation and capture outcome notes in `specs/002-calendar-event-e2e-tests/tasks.md`
+- [X] T027 [P] Update frontend test command documentation for Playwright in `README.md`
+- [X] T028 [P] Align quickstart run commands and troubleshooting with final scripts in `specs/002-calendar-event-e2e-tests/quickstart.md`
+- [X] T029 Run complete E2E validation and capture outcome notes in `specs/002-calendar-event-e2e-tests/tasks.md`
 
 ---
 
@@ -223,6 +223,15 @@ T026 -> frontend/tests/e2e/event-delete.spec.ts
 - `[USx]` labels provide traceability back to spec user stories.
 - Every story is independently executable and testable after Phase 2.
 - Keep test data isolated via unique titles and cleanup hooks to satisfy repeatability requirements.
+
+### Phase 6 Validation Notes
+
+- Ran full E2E validation command: `npm run test:e2e` from `frontend/` on 2026-11-14.
+- Result: Playwright suite execution starts, discovers all E2E specs, and reports 7 failing tests due to local service connectivity.
+- Current blockers:
+   - Frontend not reachable at `127.0.0.1:5173` (`ERR_CONNECTION_REFUSED` in navigation spec).
+   - Backend not reachable at `127.0.0.1:8000` (`ECONNREFUSED` in event cleanup/setup for create/delete specs).
+- Action needed to reach full green run: start both backend and frontend services, then rerun `npm run test:e2e`.
 
 ## Phase 7: Convergence
 

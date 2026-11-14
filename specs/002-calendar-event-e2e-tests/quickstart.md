@@ -49,7 +49,15 @@ npx playwright install
 From `frontend/`, run only E2E specs:
 
 ```bash
-npx playwright test tests/e2e
+npm run test:e2e
+```
+
+Optional targeted runs:
+
+```bash
+npx playwright test tests/e2e/event-create-all-day.spec.ts
+npx playwright test tests/e2e/event-create-timed.spec.ts
+npx playwright test tests/e2e/event-delete.spec.ts
 ```
 
 ## Expected Outcomes
