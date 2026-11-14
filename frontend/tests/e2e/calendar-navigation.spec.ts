@@ -1,5 +1,28 @@
 import { test, expect } from "@playwright/test";
 
+test.describe("calendar multi-view journeys", () => {
+  test.fixme("week to month transition", async ({ page }) => {
+    await page.goto("/");
+
+    // Phase 3 will wire view-switching controls and month rendering assertions.
+    await expect(page.getByText("SpeciaelFamily Calendar")).toBeVisible();
+  });
+
+  test.fixme("week to day transition", async ({ page }) => {
+    await page.goto("/");
+
+    // Phase 3 will wire day-selection to day-view transition assertions.
+    await expect(page.getByText("SpeciaelFamily Calendar")).toBeVisible();
+  });
+
+  test.fixme("create edit delete lifecycle from week view", async ({ page }) => {
+    await page.goto("/");
+
+    // Phase 4 will wire create/edit/delete lifecycle assertions.
+    await expect(page.getByText("SpeciaelFamily Calendar")).toBeVisible();
+  });
+});
+
 test("cross-day navigation correctness", async ({ page }) => {
   await page.goto("/");
 

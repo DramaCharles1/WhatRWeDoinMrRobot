@@ -18,11 +18,11 @@
 
 **Purpose**: Prepare shared scaffolding, test entry points, and documentation anchors for this feature.
 
-- [ ] T001 Create feature validation checklist section for this workstream in `specs/003-calendar-multi-view-redesign/quickstart.md`
-- [ ] T002 Add component test files for view switching and day rendering in `frontend/tests/component/calendarViewSwitching.spec.tsx` and `frontend/tests/component/calendarDayView.spec.tsx`
-- [ ] T003 [P] Add component test file for event details interactions in `frontend/tests/component/calendarEventDetails.spec.tsx`
-- [ ] T004 [P] Add/reshape required E2E flow specs in `frontend/tests/e2e/calendar-navigation.spec.ts`
-- [ ] T005 Add backend resiliency/observability test file scaffold for range reads in `backend/tests/integration/test_event_range_resilience.py`
+- [X] T001 Create feature validation checklist section for this workstream in `specs/003-calendar-multi-view-redesign/quickstart.md`
+- [X] T002 Add component test files for view switching and day rendering in `frontend/tests/component/calendarViewSwitching.spec.tsx` and `frontend/tests/component/calendarDayView.spec.tsx`
+- [X] T003 [P] Add component test file for event details interactions in `frontend/tests/component/calendarEventDetails.spec.tsx`
+- [X] T004 [P] Add/reshape required E2E flow specs in `frontend/tests/e2e/calendar-navigation.spec.ts`
+- [X] T005 Add backend resiliency/observability test file scaffold for range reads in `backend/tests/integration/test_event_range_resilience.py`
 
 ---
 

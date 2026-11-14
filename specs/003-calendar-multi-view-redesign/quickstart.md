@@ -4,6 +4,12 @@
 
 Validate that week/month/day views, event lifecycle actions, and themed UI behavior work end-to-end.
 
+## Phase 1 Setup Checklist (Workstream Anchor)
+
+- [ ] Confirm scaffold tests exist for view switching, day view rendering, event detail interactions, and range resilience.
+- [ ] Confirm Playwright spec includes placeholders for week->month, week->day, and weekly create/edit/delete flows.
+- [ ] Confirm this checklist is updated to `[x]` only after foundational and story tasks land.
+
 ## Prerequisites
 
 - Python and Node dependencies installed.
