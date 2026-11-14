@@ -55,8 +55,23 @@ export async function assertDeletedEventNotInListing(page: Page, title: string):
   // "A deleted event must not appear in subsequent listing reads."
 }
 
+export async function assertDeletedEventAfterRefresh(page: Page, title: string): Promise<void> {
+  await page.reload();
+  await assertDeletedEventNotInListing(page, title);
+}
+
 export async function clickDeleteForEventTitle(page: Page, title: string): Promise<void> {
   const row = eventListItemByTitle(page, title);
   await expect(row).toBeVisible();
   await row.getByRole("button", { name: /^delete-/i }).click();
+}
+
+export async function deleteEventByTitleWithConfirmation(
+  page: Page,
+  title: string,
+): Promise<void> {
+  page.once("dialog", async (dialog) => {
+    await dialog.accept();
+  });
+  await clickDeleteForEventTitle(page, title);
 }

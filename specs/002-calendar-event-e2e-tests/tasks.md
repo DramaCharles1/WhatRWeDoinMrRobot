@@ -93,14 +93,14 @@
 
 ### Tests for User Story 3
 
-- [ ] T022 [P] [US3] Add delete-existing-event E2E scenario in `frontend/tests/e2e/event-delete.spec.ts`
-- [ ] T023 [US3] Add delete-persistence-after-refresh E2E scenario in `frontend/tests/e2e/event-delete.spec.ts`
+- [X] T022 [P] [US3] Add delete-existing-event E2E scenario in `frontend/tests/e2e/event-delete.spec.ts`
+- [X] T023 [US3] Add delete-persistence-after-refresh E2E scenario in `frontend/tests/e2e/event-delete.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T024 [P] [US3] Extend page helper for event row delete action and confirmation handling in `frontend/tests/e2e/support/dayListAssertions.ts`
-- [ ] T025 [US3] Add scenario-local setup that creates a disposable event before delete in `frontend/tests/e2e/event-delete.spec.ts`
-- [ ] T026 [US3] Wire stage-level failure reporting (`delete` and `retrieve/list`) plus final cleanup guard in `frontend/tests/e2e/event-delete.spec.ts`
+- [X] T024 [P] [US3] Extend page helper for event row delete action and confirmation handling in `frontend/tests/e2e/support/dayListAssertions.ts`
+- [X] T025 [US3] Add scenario-local setup that creates a disposable event before delete in `frontend/tests/e2e/event-delete.spec.ts`
+- [X] T026 [US3] Wire stage-level failure reporting (`delete` and `retrieve/list`) plus final cleanup guard in `frontend/tests/e2e/event-delete.spec.ts`
 
 **Checkpoint**: User Story 3 is independently testable and verifies delete behavior end to end.
 
