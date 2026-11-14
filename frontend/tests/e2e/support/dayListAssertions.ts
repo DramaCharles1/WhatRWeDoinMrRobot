@@ -22,8 +22,13 @@ export async function assertAllDayEventInListing(page: Page, title: string): Pro
   // "A created event must appear in the listing for its date."
 }
 
-export async function assertAllDayEventAfterRefresh(page: Page, title: string): Promise<void> {
+export async function assertAllDayEventAfterRefresh(
+  page: Page,
+  title: string,
+  eventDate: string,
+): Promise<void> {
   await page.reload();
+  await page.getByLabel("selected-day").fill(eventDate);
   await assertAllDayEventInListing(page, title);
 }
 
@@ -36,7 +41,8 @@ export async function assertTimedEventInListing(
   const row = eventListItemByTitle(page, title);
   await expect(row).toBeVisible();
   await expect(row.locator("strong")).toHaveText(title);
-  await expect(row.getByText(`${startTime} - ${endTime}`)).toBeVisible();
+  const expectedRange = new RegExp(`^${startTime}(?::00)? - ${endTime}(?::00)?$`);
+  await expect(row.locator("p")).toHaveText(expectedRange);
   // "A created event must appear in the listing for its date."
 }
 
@@ -45,8 +51,10 @@ export async function assertTimedEventAfterRefresh(
   title: string,
   startTime: string,
   endTime: string,
+  eventDate: string,
 ): Promise<void> {
   await page.reload();
+  await page.getByLabel("selected-day").fill(eventDate);
   await assertTimedEventInListing(page, title, startTime, endTime);
 }
 

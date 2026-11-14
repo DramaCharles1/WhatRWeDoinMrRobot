@@ -226,19 +226,20 @@ T026 -> frontend/tests/e2e/event-delete.spec.ts
 
 ### Phase 6 Validation Notes
 
-- Ran full E2E validation command: `npm run test:e2e` from `frontend/` on 2026-11-14.
-- Result: Playwright suite execution starts, discovers all E2E specs, and reports 7 failing tests due to local service connectivity.
-- Current blockers:
-   - Frontend not reachable at `127.0.0.1:5173` (`ERR_CONNECTION_REFUSED` in navigation spec).
-   - Backend not reachable at `127.0.0.1:8000` (`ECONNREFUSED` in event cleanup/setup for create/delete specs).
-- Action needed to reach full green run: start both backend and frontend services, then rerun `npm run test:e2e`.
+- Initial run on 2026-11-14 failed due to local service/proxy connectivity and stale frontend runtime state.
+- After proxy target hardening (`frontend/vite.config.ts`) and E2E synchronization/assertion fixes, targeted required specs pass:
+   - `E2E_BASE_URL=http://127.0.0.1:4173 npx playwright test tests/e2e/event-create-all-day.spec.ts tests/e2e/event-create-timed.spec.ts tests/e2e/event-delete.spec.ts --reporter=line`
+   - Result: `6 passed`.
+- Final full suite validation on 2026-11-14:
+   - `E2E_BASE_URL=http://127.0.0.1:4173 npm run test:e2e -- --reporter=line`
+   - Result: `7 passed`.
 
 ## Phase 7: Convergence
 
-- [ ] T030 Implement all-day create and post-refresh E2E coverage in `frontend/tests/e2e/event-create-all-day.spec.ts` per US1/AC1, US1/AC2, FR-001, FR-002 (missing)
-- [ ] T031 Implement timed create and post-refresh E2E coverage in `frontend/tests/e2e/event-create-timed.spec.ts` per US2/AC1, US2/AC2, FR-003, FR-004 (missing)
-- [ ] T032 Implement delete flow and post-refresh absence E2E coverage in `frontend/tests/e2e/event-delete.spec.ts` per US3/AC1, US3/AC2, FR-005, FR-006 (missing)
-- [ ] T033 Add deterministic E2E fixtures/helpers in `frontend/tests/e2e/support/fixtures.ts`, `frontend/tests/e2e/support/eventForm.ts`, `frontend/tests/e2e/support/dayListAssertions.ts`, `frontend/tests/e2e/support/eventCleanup.ts`, `frontend/tests/e2e/support/testData.ts`, and `frontend/tests/e2e/support/stageReporting.ts` per FR-007 and plan: constraints decision (missing)
-- [ ] T034 Add Playwright dependency/scripts in `frontend/package.json`, add runner configuration in `frontend/playwright.config.ts`, and add artifact ignores in `frontend/.gitignore` per plan: testing decision and T001-T003 intent (missing)
-- [ ] T035 Document E2E prerequisites and run command in `README.md` per FR-009 and SC-005 (missing)
-- [ ] T036 Review whether `frontend/tests/e2e/calendar-navigation.spec.ts` should be retained as out-of-scope coverage and either justify it in `specs/002-calendar-event-e2e-tests/tasks.md` notes or remove it per spec scope (unrequested)
+- [X] T030 Implement all-day create and post-refresh E2E coverage in `frontend/tests/e2e/event-create-all-day.spec.ts` per US1/AC1, US1/AC2, FR-001, FR-002
+- [X] T031 Implement timed create and post-refresh E2E coverage in `frontend/tests/e2e/event-create-timed.spec.ts` per US2/AC1, US2/AC2, FR-003, FR-004
+- [X] T032 Implement delete flow and post-refresh absence E2E coverage in `frontend/tests/e2e/event-delete.spec.ts` per US3/AC1, US3/AC2, FR-005, FR-006
+- [X] T033 Add deterministic E2E fixtures/helpers in `frontend/tests/e2e/support/fixtures.ts`, `frontend/tests/e2e/support/eventForm.ts`, `frontend/tests/e2e/support/dayListAssertions.ts`, `frontend/tests/e2e/support/eventCleanup.ts`, `frontend/tests/e2e/support/testData.ts`, and `frontend/tests/e2e/support/stageReporting.ts` per FR-007 and plan: constraints decision
+- [X] T034 Add Playwright dependency/scripts in `frontend/package.json`, add runner configuration in `frontend/playwright.config.ts`, and add artifact ignores in `frontend/.gitignore` per plan: testing decision and T001-T003 intent
+- [X] T035 Document E2E prerequisites and run command in `README.md` per FR-009 and SC-005
+- [X] T036 Retain `frontend/tests/e2e/calendar-navigation.spec.ts` as additive smoke coverage; full-suite validation (`7 passed`) confirms no conflict with requested scope

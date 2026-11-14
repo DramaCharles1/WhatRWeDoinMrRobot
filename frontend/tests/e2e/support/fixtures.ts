@@ -10,6 +10,15 @@ async function waitForCalendarReady(page: Page): Promise<void> {
   await expect(page.getByRole("heading", { name: "SpeciaelFamily Calendar" })).toBeVisible();
 }
 
+async function waitForSelectedDayLoaded(page: Page, date: string): Promise<void> {
+  await expect(page.getByRole("heading", { level: 2 })).toContainText(date);
+
+  const loading = page.getByText("Loading events...");
+  if (await loading.isVisible().catch(() => false)) {
+    await expect(loading).toBeHidden();
+  }
+}
+
 export const test = base.extend<CalendarFixtures>({
   gotoCalendar: async ({ page }, fixtureCallback) => {
     await fixtureCallback(async (date?: string) => {
@@ -17,13 +26,14 @@ export const test = base.extend<CalendarFixtures>({
       await waitForCalendarReady(page);
       if (date) {
         await page.getByLabel("selected-day").fill(date);
+        await waitForSelectedDayLoaded(page, date);
       }
     });
   },
   selectDay: async ({ page }, fixtureCallback) => {
     await fixtureCallback(async (date: string) => {
       await page.getByLabel("selected-day").fill(date);
-      await expect(page.getByRole("heading", { level: 2 })).toContainText(date);
+      await waitForSelectedDayLoaded(page, date);
     });
   },
 });
