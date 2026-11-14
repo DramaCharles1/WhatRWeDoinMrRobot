@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "speciaelfamily-backend"
 version = "0.1.0"
@@ -50,3 +54,6 @@ ignore_errors = true
 
 [tool.django-stubs]
 django_settings_module = "backend.settings"
+
+[tool.setuptools.packages.find]
+include = ["api*", "apps*", "backend*", "services*"]
