@@ -39,7 +39,7 @@
 
 ## Dependencies And Assumptions
 
-- [ ] CHK012 Is the intended MVP boundary (calendar/task only, excluding agent-related capability) explicitly reconciled across spec, plan, and task artifacts? [Scope, Assumption, Constitution §Delivery Constraints, Spec §Assumptions]
+- [x] CHK012 Is the intended MVP boundary (calendar/task only, excluding agent-related capability) explicitly reconciled across spec, plan, and task artifacts? [Scope, Assumption, Constitution §Delivery Constraints, Spec §Assumptions]
 
 ## Notes
 

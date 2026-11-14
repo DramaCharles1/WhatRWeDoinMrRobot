@@ -84,3 +84,13 @@ all technical unknowns.
 - Rationale: Meets constitution principles IV and V without dashboards or alerting.
 - Alternatives considered:
   - Metrics/dashboards/alerts: rejected as out of MVP scope.
+
+## Decision 11: Breaking-change governance for Task-to-Event cutover
+- Decision: Use explicit feature-level approval artifacts for the intentional API/schema break,
+  recorded in both `spec.md` and `plan.md` (rationale, consumer impact, rollback/mitigation,
+  and reviewer sign-off requirement).
+- Rationale: Satisfies constitution delivery constraint requiring backward compatibility unless a
+  breaking change is explicitly approved.
+- Alternatives considered:
+  - Constitution amendment: rejected; unnecessary for a single feature-level break.
+  - Backward-compatibility shim: rejected; adds complexity outside MVP scope.

@@ -23,6 +23,8 @@
 ### Session 2026-11-14
 
 - Q: Should static code analysis be enforced as a required quality gate before merge? -> A: Yes. Static analysis, type checking, and successful production builds are required for both backend and frontend before merge; failing any gate blocks delivery.
+- Q: When the code moves from the current Task model to the Event model, what should happen to any task records already in the database? → A: Discard old task data; replace the Task table with a new Event table (no data migration).
+- Q: Which governance path should this feature use to permit the Task to Event breaking API/schema change while staying constitution-compliant? -> A: Add explicit breaking-change approval in this feature docs (spec and plan) with rationale, impact, rollback/mitigation, and reviewer sign-off requirement.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -125,6 +127,8 @@ As a user, I can delete an event when it is no longer needed so the calendar sta
 - **FR-023**: When create, update, or delete operations fail, the system MUST return a clear operation-specific error message. No additional recovery requirements (input retention, retry action, or automatic reconcile) are mandated for MVP.
 - **FR-024**: The system MUST provide keyboard-accessible interaction for core calendar controls (date navigation, event create/edit/delete actions), visible focus indicators for interactive elements, and accessible labels for form fields and validation messages.
 - **FR-025**: The system MUST support responsive usability for core flows at viewport widths of 360px and 1280px, without horizontal scrolling in day navigation and event create/edit/delete interactions.
+- **FR-026**: When the Event schema replaces the prior Task schema, the system MUST discard existing task records and MUST NOT migrate them into events; the Task table is removed and a new Event table is created.
+- **FR-027**: Because replacing Task with Event is a breaking API/schema change, this feature MUST include explicit approval artifacts in `spec.md` and `plan.md` before implementation: the breaking-change rationale, consumer impact, rollback/mitigation approach, and required reviewer sign-off.
 
 ### Key Entities *(include if feature involves data)*
 

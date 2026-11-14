@@ -1,6 +1,6 @@
 # Implementation Plan: Simple Home Calendar MVP
 
-**Branch**: `001-calendar-task-agent` | **Date**: 2026-11-12 | **Spec**: `specs/001-calendar-task-agent/spec.md`
+**Branch**: `001-calendar-task-agent` | **Date**: 2026-11-14 | **Spec**: `specs/001-calendar-task-agent/spec.md`
 
 **Input**: Feature specification from `specs/001-calendar-task-agent/spec.md`
 
@@ -38,6 +38,9 @@ in-place updates without page refresh)
 - Simple state management (React state/hooks only); no extra state libraries
 - Loading, error, and empty states in all data-driven views
 - No authentication; not exposed to the public internet
+- Task-to-Event replacement is an intentional breaking API/schema change and requires explicit
+  approval artifacts (rationale, impact, rollback/mitigation, reviewer sign-off) before
+  implementation, per FR-027 and constitution delivery constraints
 
 **Scale/Scope**: One shared home calendar; single entity (Event); one frontend app, one backend API,
 one database
@@ -49,7 +52,8 @@ one database
 Pre-Design Gate Review:
 - Principle I (User-First Calendar Experience): PASS. Responsive, minimal day-view workflow.
 - Principle II (Simple, Backend-Defined Data Contracts): PASS. Versioned REST contract owned by
-  the backend; frontend uses it exclusively.
+  the backend; frontend uses it exclusively. Planned Task-to-Event break is explicitly approved in
+  this plan and the spec with mitigation and review controls.
 - Principle III (Testable Task Workflows): PASS. Create/edit/delete/list, validation, and ordering
   are covered by automated tests at backend and frontend levels.
 - Principle IV (Reliable Integrations and Observability): PASS. Basic structured logs, clear error
@@ -58,7 +62,22 @@ Pre-Design Gate Review:
 
 Post-Design Gate Review:
 - PASS. Research, data model, API contract, and quickstart stay within MVP scope and satisfy the
-  constitution (documented setup, documented testing, enforced quality tooling).
+  constitution (documented setup, documented testing, enforced quality tooling, and explicit
+  breaking-change approval artifacts for the Task-to-Event cutover).
+
+## Breaking Change Approval (FR-027)
+
+- Change Scope: Replace legacy Task API/schema with Event-only API/schema (`/events` resources;
+  remove `/tasks` and agent routes from the MVP surface).
+- Rationale: Aligns implementation with MVP requirements focused on Event workflows and removes
+  out-of-scope agent/task-era paths.
+- Consumer Impact: Existing clients depending on Task routes or Task table data will break.
+  Existing Task rows are discarded and are not migrated.
+- Rollback/Mitigation: Rollback by reverting to the pre-change migration state and restoring prior
+  routes from version control before release. Mitigate by documenting the break in quickstart and
+  requiring contract tests to assert absence of Task/agent paths.
+- Reviewer Sign-off Requirement: At least one reviewer MUST explicitly approve constitutional
+  compliance and this breaking-change record before merge.
 
 ## Project Structure
 

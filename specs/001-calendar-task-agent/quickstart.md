@@ -6,6 +6,9 @@ Set up the app locally, run each part's tests, and validate the MVP behavior end
 Contract details: `specs/001-calendar-task-agent/contracts/openapi.yaml`. Entity and validation
 rules: `specs/001-calendar-task-agent/data-model.md`.
 
+Breaking-change note: This MVP replaces legacy Task routes/schema with Event-only contracts.
+`/tasks` and agent endpoints are intentionally not part of this feature's API surface.
+
 ## Prerequisites
 
 - Python 3.12+
