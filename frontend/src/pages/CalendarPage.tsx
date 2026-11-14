@@ -1,12 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { AgentPanel } from "../components/AgentPanel";
 import { DayNavigator } from "../components/DayNavigator";
 import { TaskForm } from "../components/TaskForm";
 import { TaskList } from "../components/TaskList";
 import { TaskListEmptyState } from "../components/TaskListEmptyState";
-import { createTask, deleteTask, listTasksByDate, updateTask } from "../services/tasksService";
-import type { ApiError, TaskDto } from "../types/api";
+import { createEvent, deleteEvent, listEventsByDate, updateEvent } from "../services/tasksService";
+import type { ApiError, EventDto } from "../types/api";
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -14,18 +13,21 @@ function todayIso(): string {
 
 export function CalendarPage() {
   const [selectedDate, setSelectedDate] = useState(todayIso());
-  const [tasks, setTasks] = useState<TaskDto[]>([]);
-  const [editingTask, setEditingTask] = useState<TaskDto | null>(null);
+  const [tasks, setTasks] = useState<EventDto[]>([]);
+  const [editingTask, setEditingTask] = useState<EventDto | null>(null);
   const [error, setError] = useState("");
 
-  async function refresh(date = selectedDate) {
-    const response = await listTasksByDate(date);
-    setTasks(response.tasks);
-  }
+  const refresh = useCallback(
+    async (date = selectedDate) => {
+      const response = await listEventsByDate(date);
+      setTasks(response.events);
+    },
+    [selectedDate],
+  );
 
   useEffect(() => {
     refresh().catch((err: ApiError) => setError(err.message));
-  }, [selectedDate]);
+  }, [refresh]);
 
   const heading = useMemo(() => `Tasks for ${selectedDate}`, [selectedDate]);
 
@@ -41,18 +43,16 @@ export function CalendarPage() {
         onSubmit={async (input) => {
           try {
             if (editingTask) {
-              await updateTask(editingTask.id, input);
+              await updateEvent(editingTask.id, input);
               setEditingTask(null);
             } else {
-              await createTask(input);
+              await createEvent(input);
             }
             await refresh(selectedDate);
           } catch (err) {
             const apiError = err as ApiError;
             setError(apiError.message);
-            if (apiError.code === "stale_operation") {
-              await refresh(selectedDate);
-            }
+            await refresh(selectedDate);
           }
         }}
       />
@@ -63,19 +63,16 @@ export function CalendarPage() {
           onEdit={(task) => setEditingTask(task)}
           onDelete={async (taskId) => {
             try {
-              await deleteTask(taskId);
+              await deleteEvent(taskId);
               await refresh(selectedDate);
             } catch (err) {
               const apiError = err as ApiError;
               setError(apiError.message);
-              if (apiError.code === "stale_operation") {
-                await refresh(selectedDate);
-              }
+              await refresh(selectedDate);
             }
           }}
         />
       ) : null}
-      <AgentPanel selectedDate={selectedDate} />
     </main>
   );
 }

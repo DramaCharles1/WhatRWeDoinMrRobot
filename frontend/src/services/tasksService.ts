@@ -1,33 +1,31 @@
 import { apiRequest } from "./apiClient";
-import type { TaskDto, TaskListResponse } from "../types/api";
+import type {
+  EventDto,
+  EventListResponse,
+  EventUpdateRequest,
+  EventWriteRequest,
+} from "../types/api";
 
-export type TaskInput = {
-  title: string;
-  task_date: string;
-  creator_name: string;
-  notes?: string;
-};
-
-export async function listTasksByDate(date: string): Promise<TaskListResponse> {
-  return apiRequest<TaskListResponse>(`/tasks?date=${encodeURIComponent(date)}`);
+export async function listEventsByDate(date: string): Promise<EventListResponse> {
+  return apiRequest<EventListResponse>(`/events?date=${encodeURIComponent(date)}`);
 }
 
-export async function createTask(input: TaskInput): Promise<TaskDto> {
-  return apiRequest<TaskDto>("/tasks", {
+export async function createEvent(input: EventWriteRequest): Promise<EventDto> {
+  return apiRequest<EventDto>("/events", {
     method: "POST",
     body: JSON.stringify(input),
   });
 }
 
-export async function updateTask(taskId: string, input: Partial<TaskInput>): Promise<TaskDto> {
-  return apiRequest<TaskDto>(`/tasks/${taskId}`, {
+export async function updateEvent(eventId: string, input: EventUpdateRequest): Promise<EventDto> {
+  return apiRequest<EventDto>(`/events/${eventId}`, {
     method: "PATCH",
     body: JSON.stringify(input),
   });
 }
 
-export async function deleteTask(taskId: string): Promise<void> {
-  return apiRequest<void>(`/tasks/${taskId}`, {
+export async function deleteEvent(eventId: string): Promise<void> {
+  return apiRequest<void>(`/events/${eventId}`, {
     method: "DELETE",
   });
 }

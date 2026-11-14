@@ -9,9 +9,9 @@
     "lint": "eslint .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "test:component": "vitest run",
-    "coverage": "vitest run --coverage"
+    "test": "vitest --exclude tests/e2e/**",
+    "test:component": "vitest run --exclude tests/e2e/**",
+    "coverage": "vitest run --coverage --exclude tests/e2e/**"
   },
   "dependencies": {
     "react": "^18.3.1",

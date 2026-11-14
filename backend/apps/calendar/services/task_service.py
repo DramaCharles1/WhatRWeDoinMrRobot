@@ -1,34 +1,26 @@
-from dataclasses import dataclass
+from __future__ import annotations
 
-from apps.calendar.models import Task
+from datetime import date
 
-
-@dataclass
-class StaleTaskError(Exception):
-    message: str = "This task was already removed in another tab."
+from apps.calendar.models import Event
 
 
-def list_tasks_by_date(task_date):
-    return Task.objects.filter(task_date=task_date).order_by("created_at")
+def list_events_by_date(selected_date: date):
+    return Event.objects.filter(event_date=selected_date).order_by("-is_all_day", "start_time", "created_at")
 
 
-def create_task(payload: dict) -> Task:
-    return Task.objects.create(**payload)
+def create_event(payload: dict) -> Event:
+    return Event.objects.create(**payload)
 
 
-def update_task(task_id, updates: dict) -> Task:
-    try:
-        task = Task.objects.get(pk=task_id)
-    except Task.DoesNotExist as exc:
-        raise Task.DoesNotExist("Task not found.") from exc
-
+def update_event(event_id, updates: dict) -> Event:
+    event = Event.objects.get(pk=event_id)
     for key, value in updates.items():
-        setattr(task, key, value)
-    task.save()
-    return task
+        setattr(event, key, value)
+    event.save()
+    return event
 
 
-def delete_task(task_id) -> None:
-    deleted, _ = Task.objects.filter(pk=task_id).delete()
-    if deleted == 0:
-        raise StaleTaskError()
+def delete_event(event_id) -> None:
+    event = Event.objects.get(pk=event_id)
+    event.delete()

@@ -1,17 +1,15 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 
-import type { TaskDto } from "../types/api";
-import type { TaskInput } from "../services/tasksService";
+import type { EventDto, EventWriteRequest } from "../types/api";
 
 type Props = {
   selectedDate: string;
-  onSubmit: (input: TaskInput) => Promise<void>;
-  editingTask?: TaskDto | null;
+  onSubmit: (input: EventWriteRequest) => Promise<void>;
+  editingTask?: EventDto | null;
 };
 
 export function TaskForm({ selectedDate, onSubmit, editingTask }: Props) {
   const [title, setTitle] = useState(editingTask?.title ?? "");
-  const [creatorName, setCreatorName] = useState(editingTask?.creator_name ?? "");
   const [notes, setNotes] = useState(editingTask?.notes ?? "");
   const [error, setError] = useState("");
 
@@ -24,12 +22,11 @@ export function TaskForm({ selectedDate, onSubmit, editingTask }: Props) {
     setError("");
     await onSubmit({
       title,
-      task_date: selectedDate,
-      creator_name: creatorName,
+      event_date: selectedDate,
+      is_all_day: true,
       notes,
     });
     setTitle("");
-    setCreatorName("");
     setNotes("");
   }
 
@@ -41,12 +38,6 @@ export function TaskForm({ selectedDate, onSubmit, editingTask }: Props) {
         value={title}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
         placeholder="Task title"
-      />
-      <input
-        aria-label="creator_name"
-        value={creatorName}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setCreatorName(e.target.value)}
-        placeholder="Creator"
       />
       <textarea
         aria-label="notes"

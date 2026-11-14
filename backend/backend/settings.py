@@ -17,7 +17,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "apps.calendar",
-    "apps.agent",
 ]
 
 MIDDLEWARE = [

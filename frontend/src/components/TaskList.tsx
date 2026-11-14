@@ -1,8 +1,8 @@
-import type { TaskDto } from "../types/api";
+import type { EventDto } from "../types/api";
 
 type Props = {
-  tasks: TaskDto[];
-  onEdit: (task: TaskDto) => void;
+  tasks: EventDto[];
+  onEdit: (task: EventDto) => void;
   onDelete: (taskId: string) => Promise<void>;
 };
 

@@ -1,5 +1,2 @@
-METRIC_AGENT_REQUEST_VOLUME = "agent.request.volume"
-METRIC_AGENT_FAILURE_RATE = "agent.failure.rate"
-METRIC_AGENT_LATENCY_MS = "agent.latency.ms"
-METRIC_DEPENDENCY_HEALTH = "dependency.health"
 METRIC_HTTP_REQUEST_LATENCY_MS = "http.request.latency.ms"
+METRIC_EVENT_OPERATION_FAILURES = "event.operation.failures"
