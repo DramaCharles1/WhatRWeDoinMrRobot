@@ -1,18 +1,35 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("calendar multi-view journeys", () => {
-  test.fixme("week to month transition", async ({ page }) => {
+  test("week to month transition", async ({ page }) => {
     await page.goto("/");
 
-    // Phase 3 will wire view-switching controls and month rendering assertions.
     await expect(page.getByText("SpeciaelFamily Calendar")).toBeVisible();
+    await expect(page.getByRole("region", { name: "week-view" })).toBeVisible();
+
+    await page.getByRole("button", { name: "month-view-button" }).click();
+
+    await expect(page.getByRole("region", { name: "month-view" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "month-view-button" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
-  test.fixme("week to day transition", async ({ page }) => {
+  test("week to day transition", async ({ page }) => {
     await page.goto("/");
 
-    // Phase 3 will wire day-selection to day-view transition assertions.
     await expect(page.getByText("SpeciaelFamily Calendar")).toBeVisible();
+    await expect(page.getByRole("region", { name: "week-view" })).toBeVisible();
+
+    const dayCell = page.locator('button[aria-label^="select-day-"]').first();
+    await dayCell.click();
+
+    await expect(page.getByRole("region", { name: "day-view" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "day-view-button" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
   test.fixme("create edit delete lifecycle from week view", async ({ page }) => {
@@ -27,8 +44,6 @@ test("cross-day navigation correctness", async ({ page }) => {
   await page.goto("/");
 
   await expect(page.getByText("SpeciaelFamily Calendar")).toBeVisible();
-  await expect(page.getByText("No events scheduled for this day.")).toBeVisible();
-
   const selectedDay = page.getByLabel("selected-day");
   const heading = page.locator("h2");
 
@@ -46,5 +61,4 @@ test("cross-day navigation correctness", async ({ page }) => {
 
   await selectedDay.fill("2026-11-20");
   await expect(heading).toContainText("2026-11-20");
-  await expect(page.getByText("No events scheduled for this day.")).toBeVisible();
 });

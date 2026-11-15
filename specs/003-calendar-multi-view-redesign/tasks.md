@@ -57,20 +57,20 @@
 
 ### Tests for User Story 1
 
-- [ ] T018 [P] [US1] Add component tests for default week mode and mode switch controls in `frontend/tests/component/calendarViewSwitching.spec.tsx`
-- [ ] T019 [P] [US1] Add component tests for day selection and day-view list behavior in `frontend/tests/component/calendarDayView.spec.tsx`
-- [ ] T020 [US1] Add Playwright assertions for week->month and week->day transitions in `frontend/tests/e2e/calendar-navigation.spec.ts`
+- [X] T018 [P] [US1] Add component tests for default week mode and mode switch controls in `frontend/tests/component/calendarViewSwitching.spec.tsx`
+- [X] T019 [P] [US1] Add component tests for day selection and day-view list behavior in `frontend/tests/component/calendarDayView.spec.tsx`
+- [X] T020 [US1] Add Playwright assertions for week->month and week->day transitions in `frontend/tests/e2e/calendar-navigation.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Create view mode switcher UI in `frontend/src/components/CalendarViewSwitcher.tsx`
-- [ ] T022 [P] [US1] Create week grid rendering component in `frontend/src/components/CalendarWeekView.tsx`
-- [ ] T023 [P] [US1] Create month grid rendering component in `frontend/src/components/CalendarMonthView.tsx`
-- [ ] T024 [P] [US1] Create day view component with complete selected-day event rendering in `frontend/src/components/CalendarDayView.tsx`
-- [ ] T025 [US1] Refactor page state to include `viewMode`, `anchorDate`, and `selectedDate` in `frontend/src/pages/CalendarPage.tsx`
-- [ ] T026 [US1] Integrate day and range fetch orchestration for all view modes in `frontend/src/pages/CalendarPage.tsx`
-- [ ] T027 [US1] Enforce verbatim `CalendarViewState` constraints "Default `viewMode` is `week` at first load." and "`selectedDate` must always fall within the rendered range for week/month, or equal the rendered day in day view." in `frontend/src/pages/CalendarPage.tsx`
-- [ ] T028 [US1] Ensure empty selected-day states still provide add-event affordance in `frontend/src/components/CalendarDayView.tsx` and `frontend/src/components/TaskListEmptyState.tsx`
+- [X] T021 [P] [US1] Create view mode switcher UI in `frontend/src/components/CalendarViewSwitcher.tsx`
+- [X] T022 [P] [US1] Create week grid rendering component in `frontend/src/components/CalendarWeekView.tsx`
+- [X] T023 [P] [US1] Create month grid rendering component in `frontend/src/components/CalendarMonthView.tsx`
+- [X] T024 [P] [US1] Create day view component with complete selected-day event rendering in `frontend/src/components/CalendarDayView.tsx`
+- [X] T025 [US1] Refactor page state to include `viewMode`, `anchorDate`, and `selectedDate` in `frontend/src/pages/CalendarPage.tsx`
+- [X] T026 [US1] Integrate day and range fetch orchestration for all view modes in `frontend/src/pages/CalendarPage.tsx`
+- [X] T027 [US1] Enforce verbatim `CalendarViewState` constraints "Default `viewMode` is `week` at first load." and "`selectedDate` must always fall within the rendered range for week/month, or equal the rendered day in day view." in `frontend/src/pages/CalendarPage.tsx`
+- [X] T028 [US1] Ensure empty selected-day states still provide add-event affordance in `frontend/src/components/CalendarDayView.tsx` and `frontend/src/components/TaskListEmptyState.tsx`
 
 **Checkpoint**: User Story 1 is independently functional and testable as the MVP.
 

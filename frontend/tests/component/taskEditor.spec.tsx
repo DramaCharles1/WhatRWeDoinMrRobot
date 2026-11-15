@@ -7,8 +7,9 @@ import { CalendarPage } from "../../src/pages/CalendarPage";
 import { TaskForm } from "../../src/components/TaskForm";
 import type { EventDto } from "../../src/types/api";
 
-const { mockListEventsByDate, mockCreateEvent, mockUpdateEvent, mockDeleteEvent } = vi.hoisted(() => ({
+const { mockListEventsByDate, mockListEventsByRange, mockCreateEvent, mockUpdateEvent, mockDeleteEvent } = vi.hoisted(() => ({
   mockListEventsByDate: vi.fn(),
+  mockListEventsByRange: vi.fn(),
   mockCreateEvent: vi.fn(),
   mockUpdateEvent: vi.fn(),
   mockDeleteEvent: vi.fn(),
@@ -16,10 +17,17 @@ const { mockListEventsByDate, mockCreateEvent, mockUpdateEvent, mockDeleteEvent 
 
 vi.mock("../../src/services/tasksService", () => ({
   listEventsByDate: mockListEventsByDate,
+  listEventsByRange: mockListEventsByRange,
   createEvent: mockCreateEvent,
   updateEvent: mockUpdateEvent,
   deleteEvent: mockDeleteEvent,
 }));
+
+mockListEventsByRange.mockResolvedValue({
+  start_date: "2026-11-10",
+  end_date: "2026-11-16",
+  days: [{ date: "2026-11-14", events: [] }],
+});
 
 afterEach(() => {
   cleanup();
