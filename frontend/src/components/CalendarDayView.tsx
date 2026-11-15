@@ -12,6 +12,9 @@ export function CalendarDayView({ selectedDate, events, onAddEvent, onOpenEvent 
   return (
     <section aria-label="day-view">
       <h3>Day view for {selectedDate}</h3>
+      <button type="button" className="focus-ring" aria-label={`add-event-${selectedDate}`} onClick={onAddEvent}>
+        Add event
+      </button>
       {events.length === 0 ? (
         <TaskListEmptyState onAddEvent={onAddEvent} />
       ) : (

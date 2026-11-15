@@ -132,9 +132,48 @@ describe("calendar event details interactions", () => {
     fireEvent.click(screen.getByRole("button", { name: "view-event-evt-3" }));
     fireEvent.click(screen.getByRole("button", { name: "Delete" }));
 
+    expect(screen.getByRole("status").textContent).toContain("Are you sure you want to delete this event?");
+    expect(screen.getByRole("button", { name: "Confirm delete" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Confirm delete" }));
+
     await waitFor(() => {
       expect(mockDeleteEvent).toHaveBeenCalledWith("evt-3");
     });
     expect(screen.queryByLabelText("event-details-panel")).toBeNull();
+  });
+
+  it("closes details panel without mutating when close is selected", async () => {
+    const today = new Date().toISOString().slice(0, 10);
+    mockListEventsByDate.mockResolvedValue({
+      date: today,
+      events: [{
+        id: "evt-4",
+        title: "Close me",
+        event_date: today,
+        is_all_day: true,
+        start_time: null,
+        end_time: null,
+        notes: "",
+        created_at: `${today}T09:00:00Z`,
+        updated_at: `${today}T09:00:00Z`,
+      }],
+    });
+
+    render(<CalendarPage />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: "week-view" })).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "view-event-evt-4" }));
+    await waitFor(() => {
+      expect(screen.getByLabelText("event-details-panel")).toBeTruthy();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(screen.queryByLabelText("event-details-panel")).toBeNull();
+    expect(mockDeleteEvent).not.toHaveBeenCalled();
+    expect(mockUpdateEvent).not.toHaveBeenCalled();
   });
 });

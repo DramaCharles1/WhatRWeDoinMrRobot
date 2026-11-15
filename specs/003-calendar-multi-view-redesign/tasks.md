@@ -84,18 +84,18 @@
 
 ### Tests for User Story 2
 
-- [ ] T029 [P] [US2] Add component coverage for event details panel states (view/edit/confirm-delete/closed) in `frontend/tests/component/calendarEventDetails.spec.tsx`
-- [ ] T030 [US2] Add Playwright flow for create->edit->save->delete in week view in `frontend/tests/e2e/calendar-navigation.spec.ts`
-- [ ] T031 [P] [US2] Add backend integration coverage that mutations are reflected in both `/events` and `/events/range` reads in `backend/tests/integration/test_event_crud_flows.py`
+- [X] T029 [P] [US2] Add component coverage for event details panel states (view/edit/confirm-delete/closed) in `frontend/tests/component/calendarEventDetails.spec.tsx`
+- [X] T030 [US2] Add Playwright flow for create->edit->save->delete in week view in `frontend/tests/e2e/calendar-navigation.spec.ts`
+- [X] T031 [P] [US2] Add backend integration coverage that mutations are reflected in both `/events` and `/events/range` reads in `backend/tests/integration/test_event_crud_flows.py`
 
 ### Implementation for User Story 2
 
-- [ ] T032 [P] [US2] Create event details panel component with edit/delete actions in `frontend/src/components/EventDetailsPanel.tsx`
-- [ ] T033 [US2] Add event selection and detail mode state transitions in `frontend/src/pages/CalendarPage.tsx`
-- [ ] T034 [US2] Add add-event entry points in week, month, and day views in `frontend/src/components/CalendarWeekView.tsx`, `frontend/src/components/CalendarMonthView.tsx`, and `frontend/src/components/CalendarDayView.tsx`
-- [ ] T035 [US2] Adapt form flows for create/edit from all views in `frontend/src/components/TaskForm.tsx`
-- [ ] T036 [US2] Enforce verbatim `CalendarEvent` constraints "Title must be non-empty.", "For timed events, both times are required and end must be later than start.", and "Create/update/delete outcomes must be reflected across all views that include `eventDate`." in `frontend/src/components/TaskForm.tsx` and `frontend/src/pages/CalendarPage.tsx`
-- [ ] T037 [US2] Refresh impacted day/range buckets after create/update/delete without page reload in `frontend/src/pages/CalendarPage.tsx`
+- [X] T032 [P] [US2] Create event details panel component with edit/delete actions in `frontend/src/components/EventDetailsPanel.tsx`
+- [X] T033 [US2] Add event selection and detail mode state transitions in `frontend/src/pages/CalendarPage.tsx`
+- [X] T034 [US2] Add add-event entry points in week, month, and day views in `frontend/src/components/CalendarWeekView.tsx`, `frontend/src/components/CalendarMonthView.tsx`, and `frontend/src/components/CalendarDayView.tsx`
+- [X] T035 [US2] Adapt form flows for create/edit from all views in `frontend/src/components/TaskForm.tsx`
+- [X] T036 [US2] Enforce verbatim `CalendarEvent` constraints "Title must be non-empty.", "For timed events, both times are required and end must be later than start.", and "Create/update/delete outcomes must be reflected across all views that include `eventDate`." in `frontend/src/components/TaskForm.tsx` and `frontend/src/pages/CalendarPage.tsx`
+- [X] T037 [US2] Refresh impacted day/range buckets after create/update/delete without page reload in `frontend/src/pages/CalendarPage.tsx`
 
 **Checkpoint**: User Story 2 is independently functional and testable with full lifecycle coverage.
 

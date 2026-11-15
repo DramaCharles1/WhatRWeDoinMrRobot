@@ -9,7 +9,7 @@ import { DayNavigator } from "../components/DayNavigator";
 import { TaskForm } from "../components/TaskForm";
 import { TaskList } from "../components/TaskList";
 import { TaskListEmptyState } from "../components/TaskListEmptyState";
-import { EventDetailsPanel } from "../components/EventDetailsPanel";
+import { EventDetailsPanel, type EventDetailsMode } from "../components/EventDetailsPanel";
 import { buildDayBuckets, type DayEventBucket } from "../services/calendarBuckets";
 import { getRangeForView, type CalendarViewMode } from "../services/calendarDateRanges";
 import {
@@ -33,6 +33,7 @@ export function CalendarPage() {
   const [tasks, setTasks] = useState<EventDto[]>([]);
   const [editingTask, setEditingTask] = useState<EventDto | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventDto | null>(null);
+  const [eventDetailMode, setEventDetailMode] = useState<EventDetailsMode | "edit" | "closed">("closed");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -96,11 +97,32 @@ export function CalendarPage() {
 
   const heading = useMemo(() => `Tasks for ${selectedDate}`, [selectedDate]);
 
-  const handleAddEvent = useCallback(() => {
-    setEditingTask(null);
-    const titleInput = document.getElementById("event-title") as HTMLInputElement | null;
-    titleInput?.focus();
+  const closeDetails = useCallback(() => {
+    setSelectedEvent(null);
+    setEventDetailMode("closed");
   }, []);
+
+  const handleAddEvent = useCallback((date?: string) => {
+    closeDetails();
+    setEditingTask(null);
+    if (date) {
+      setSelectedDate(date);
+      if (viewMode === "day") {
+        setAnchorDate(date);
+      }
+    }
+
+    const titleInput = document.getElementById("event-title") as HTMLInputElement | null;
+    if (titleInput) {
+      titleInput.focus();
+      return;
+    }
+
+    queueMicrotask(() => {
+      const deferredInput = document.getElementById("event-title") as HTMLInputElement | null;
+      deferredInput?.focus();
+    });
+  }, [closeDetails, viewMode]);
 
   const handleViewModeChange = useCallback(
     (nextViewMode: CalendarViewMode) => {
@@ -135,18 +157,20 @@ export function CalendarPage() {
 
   const handleOpenDetails = useCallback((task: EventDto) => {
     setSelectedEvent(task);
+    setEventDetailMode("view");
   }, []);
 
   const handleEditFromDetails = useCallback((task: EventDto) => {
+    setEventDetailMode("edit");
     setSelectedEvent(null);
     setEditingTask(task);
   }, []);
 
-  const handleDeleteFromDetails = useCallback(
+  const handleConfirmDeleteFromDetails = useCallback(
     async (taskId: string) => {
       try {
         await deleteEvent(taskId);
-        setSelectedEvent(null);
+        closeDetails();
         await loadCalendarData();
       } catch (err) {
         const apiError = err as ApiError;
@@ -154,13 +178,14 @@ export function CalendarPage() {
         await loadCalendarData(selectedDate, visibleRange.startDate, visibleRange.endDate, viewMode, false);
       }
     },
-    [loadCalendarData, selectedDate, visibleRange.startDate, visibleRange.endDate, viewMode],
+    [closeDetails, loadCalendarData, selectedDate, visibleRange.startDate, visibleRange.endDate, viewMode],
   );
 
   const handleEditTask = useCallback((task: EventDto) => {
-    setSelectedEvent(null);
+    closeDetails();
+    setEventDetailMode("edit");
     setEditingTask(task);
-  }, []);
+  }, [closeDetails]);
 
   return (
     <main className="calendar-page" aria-label="calendar-page">
@@ -175,6 +200,7 @@ export function CalendarPage() {
           buckets={dayBuckets}
           selectedDate={selectedDate}
           onSelectDate={openDayForDate}
+          onAddEvent={handleAddEvent}
           onOpenEvent={handleOpenDetails}
         />
       ) : null}
@@ -183,6 +209,7 @@ export function CalendarPage() {
           buckets={dayBuckets}
           selectedDate={selectedDate}
           onSelectDate={openDayForDate}
+          onAddEvent={handleAddEvent}
           onOpenEvent={handleOpenDetails}
         />
       ) : null}
@@ -190,7 +217,7 @@ export function CalendarPage() {
         <CalendarDayView
           selectedDate={selectedDate}
           events={tasks}
-          onAddEvent={handleAddEvent}
+          onAddEvent={() => handleAddEvent(selectedDate)}
           onOpenEvent={handleOpenDetails}
         />
       ) : null}
@@ -214,7 +241,7 @@ export function CalendarPage() {
           }
         }}
       />
-      {!isLoading && tasks.length === 0 ? <TaskListEmptyState onAddEvent={handleAddEvent} /> : null}
+      {!isLoading && tasks.length === 0 ? <TaskListEmptyState onAddEvent={() => handleAddEvent(selectedDate)} /> : null}
       {!isLoading && tasks.length > 0 ? (
         <TaskList
           tasks={tasks}
@@ -234,9 +261,12 @@ export function CalendarPage() {
       ) : null}
       <EventDetailsPanel
         event={selectedEvent}
-        onClose={() => setSelectedEvent(null)}
+        mode={eventDetailMode === "confirm-delete" ? "confirm-delete" : "view"}
+        onClose={closeDetails}
         onEdit={handleEditFromDetails}
-        onDelete={handleDeleteFromDetails}
+        onRequestDelete={() => setEventDetailMode("confirm-delete")}
+        onCancelDelete={() => setEventDetailMode("view")}
+        onConfirmDelete={handleConfirmDeleteFromDetails}
       />
     </main>
   );

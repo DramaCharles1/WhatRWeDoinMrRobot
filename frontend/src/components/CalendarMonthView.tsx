@@ -5,10 +5,11 @@ type Props = {
   buckets: DayEventBucket[];
   selectedDate: string;
   onSelectDate: (date: string) => void;
+  onAddEvent: (date: string) => void;
   onOpenEvent: (event: EventDto) => void;
 };
 
-export function CalendarMonthView({ buckets, selectedDate, onSelectDate, onOpenEvent }: Props) {
+export function CalendarMonthView({ buckets, selectedDate, onSelectDate, onAddEvent, onOpenEvent }: Props) {
   return (
     <section aria-label="month-view" className="calendar-grid month-grid">
       {buckets.map((bucket) => (
@@ -31,6 +32,14 @@ export function CalendarMonthView({ buckets, selectedDate, onSelectDate, onOpenE
               </li>
             ))}
           </ul>
+          <button
+            type="button"
+            className="focus-ring"
+            aria-label={`add-event-${bucket.date}`}
+            onClick={() => onAddEvent(bucket.date)}
+          >
+            Add event
+          </button>
           {bucket.overflowCount > 0 ? <p>{bucket.overflowCount} more</p> : null}
         </article>
       ))}

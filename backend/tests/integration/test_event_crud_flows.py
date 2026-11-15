@@ -139,6 +139,10 @@ def test_range_reads_reflect_mutations_across_lifecycle() -> None:
     assert created.status_code == 201
     event_id = created.json()["id"]
 
+    day_response = client.get("/api/v1/events", {"date": event_date})
+    assert day_response.status_code == 200
+    assert any(item["title"] == "School pickup" for item in day_response.json()["events"])
+
     range_response = client.get(
         "/api/v1/events/range",
         {"start_date": event_date, "end_date": event_date},
@@ -162,6 +166,10 @@ def test_range_reads_reflect_mutations_across_lifecycle() -> None:
     event_titles = [item["title"] for item in refreshed.json()["days"][0]["events"]]
     assert "Updated pickup" in event_titles
 
+    refreshed_day = client.get("/api/v1/events", {"date": event_date})
+    assert refreshed_day.status_code == 200
+    assert any(item["title"] == "Updated pickup" for item in refreshed_day.json()["events"])
+
     deleted = client.delete(f"/api/v1/events/{event_id}")
     assert deleted.status_code == 204
 
@@ -171,3 +179,7 @@ def test_range_reads_reflect_mutations_across_lifecycle() -> None:
     )
     assert final_range.status_code == 200
     assert all(item["title"] != "Updated pickup" for item in final_range.json()["days"][0]["events"])
+
+    final_day = client.get("/api/v1/events", {"date": event_date})
+    assert final_day.status_code == 200
+    assert all(item["title"] != "Updated pickup" for item in final_day.json()["events"])

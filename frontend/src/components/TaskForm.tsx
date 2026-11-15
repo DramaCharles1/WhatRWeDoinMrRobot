@@ -34,7 +34,12 @@ export function TaskForm({ selectedDate, onSubmit, editingTask }: Props) {
     }
 
     if (!isAllDay) {
-      if (!startTime || !endTime || endTime <= startTime) {
+      if (!startTime || !endTime) {
+        setError("Start and end times are required for timed events.");
+        return;
+      }
+
+      if (endTime <= startTime) {
         setError("End time must be later than start time.");
         return;
       }
