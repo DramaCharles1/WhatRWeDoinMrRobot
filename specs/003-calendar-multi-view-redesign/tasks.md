@@ -133,6 +133,26 @@
 - [ ] T047 Run and document backend contract/integration validation for range observability + timeout/retry in `specs/003-calendar-multi-view-redesign/tasks.md`
 - [ ] T048 Run and document frontend component/unit validation in `specs/003-calendar-multi-view-redesign/tasks.md`
 - [ ] T049 Run and document required Playwright E2E flows in `specs/003-calendar-multi-view-redesign/tasks.md`
+- [X] T044 [P] Update journey contract with implemented controls and expected outcomes in `specs/003-calendar-multi-view-redesign/contracts/calendar-view-journeys.md`
+- [X] T045 [P] Update quickstart with final backend/frontend test commands and expected outputs in `specs/003-calendar-multi-view-redesign/quickstart.md`
+- [X] T046 Add stakeholder visual signoff checklist and approval record for SC-006 in `specs/003-calendar-multi-view-redesign/checklists/visual-signoff.md`
+- [X] T047 Run and document backend contract/integration validation for range observability + timeout/retry in `specs/003-calendar-multi-view-redesign/tasks.md`
+- [X] T048 Run and document frontend component/unit validation in `specs/003-calendar-multi-view-redesign/tasks.md`
+- [X] T049 Run and document required Playwright E2E flows in `specs/003-calendar-multi-view-redesign/tasks.md`
+
+### Phase 6 Validation Evidence
+
+- T047 backend contract/integration validation (`backend/`):
+   - `/home/richard/source/repos/WhatRWeDoinMrRobot/.venv/bin/python -m pytest tests/contract/test_events_list_contract.py -k range`
+   - Result: `2 passed, 2 deselected`.
+   - `/home/richard/source/repos/WhatRWeDoinMrRobot/.venv/bin/python -m pytest tests/integration/test_event_range_resilience.py`
+   - Result: `2 passed`.
+- T048 frontend component validation (`frontend/`):
+   - `npx vitest run --no-cache tests/component/calendarViewSwitching.spec.tsx tests/component/calendarDayView.spec.tsx tests/component/calendarEventDetails.spec.tsx tests/component/calendarResponsive.spec.tsx tests/component/taskAccessibility.spec.tsx`
+   - Result: `5 passed` test files, `15 passed` tests.
+- T049 required Playwright E2E validation (`frontend/`):
+   - `npx playwright test tests/e2e/calendar-navigation.spec.ts`
+   - Result: `4 passed` (week->month, week->day, create/edit/delete lifecycle, cross-day navigation).
 
 ---
 
