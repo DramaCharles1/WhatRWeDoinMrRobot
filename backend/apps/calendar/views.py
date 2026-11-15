@@ -1,4 +1,6 @@
 from uuid import UUID
+import datetime as dt
+import logging
 
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import serializers, status
@@ -13,6 +15,16 @@ from services.observability import emit_event_failure_metric
 
 from .models import Event
 from .serializers import EventSerializer, EventUpdateSerializer, EventWriteSerializer
+from .serializers import (
+    DayEventsSerializer,
+    EventRangeQuerySerializer,
+    EventRangeResponseSerializer,
+)
+from .services.range_queries import (
+    RangeQueryServiceUnavailableError,
+    RangeQueryTimeoutError,
+    list_events_by_range,
+)
 from .services.task_service import (
     DeleteEventError,
     create_event,
@@ -20,6 +32,8 @@ from .services.task_service import (
     list_events_by_date,
     update_event,
 )
+
+logger = logging.getLogger("speciaelfamily.observability")
 
 
 class EventListQuerySerializer(serializers.Serializer):
@@ -132,6 +146,135 @@ class EventListCreateView(APIView):
         event = create_event(serializer.validated_data)
         audit_event_action("create", str(event.id), getattr(request, "correlation_id", None))
         return Response(EventSerializer(event).data, status=status.HTTP_201_CREATED)
+
+
+class EventRangeView(APIView):
+    @extend_schema(
+        summary="List events grouped by day across a date range",
+        parameters=[EventRangeQuerySerializer],
+        responses={
+            200: EventRangeResponseSerializer,
+            400: ErrorResponseSerializer,
+            503: ErrorResponseSerializer,
+        },
+    )
+    def get(self, request: Request) -> Response:
+        query = EventRangeQuerySerializer(data=request.query_params)
+        if not query.is_valid():
+            details = query.errors
+            message = "Range parameters are invalid."
+            if "start_date" in details or "end_date" in details:
+                start_errors = details.get("start_date", [])
+                end_errors = details.get("end_date", [])
+                if any("required" in str(item).lower() for item in [*start_errors, *end_errors]):
+                    message = "start_date and end_date query parameters are required."
+                elif any(
+                    "date has wrong format" in str(item).lower()
+                    for item in [*start_errors, *end_errors]
+                ):
+                    message = "start_date and end_date must be valid ISO dates."
+                elif any(
+                    "on or after" in str(item).lower() for item in end_errors
+                ):
+                    message = "end_date must be on or after start_date."
+
+            emit_event_failure_metric(
+                "range", "validation_error", getattr(request, "correlation_id", "")
+            )
+            logger.warning(
+                "range_read_failure",
+                extra={
+                    "operation": "range_read",
+                    "code": "validation_error",
+                    "details": details,
+                    "correlation_id": getattr(request, "correlation_id", ""),
+                },
+            )
+            return error_response("validation_error", message, details)
+
+        start_date = query.validated_data["start_date"]
+        end_date = query.validated_data["end_date"]
+
+        try:
+            result = list_events_by_range(start_date, end_date)
+        except RangeQueryTimeoutError as exc:
+            emit_event_failure_metric("range", "timeout", getattr(request, "correlation_id", ""))
+            logger.warning(
+                "range_read_failure",
+                extra={
+                    "operation": "range_read",
+                    "code": "timeout",
+                    "start_date": start_date.isoformat(),
+                    "end_date": end_date.isoformat(),
+                    "error": str(exc),
+                    "correlation_id": getattr(request, "correlation_id", ""),
+                },
+            )
+            return error_response(
+                "timeout", "Unable to load events for this date range. Please try again."
+            )
+        except RangeQueryServiceUnavailableError as exc:
+            emit_event_failure_metric(
+                "range", "service_unavailable", getattr(request, "correlation_id", "")
+            )
+            logger.warning(
+                "range_read_failure",
+                extra={
+                    "operation": "range_read",
+                    "code": "service_unavailable",
+                    "start_date": start_date.isoformat(),
+                    "end_date": end_date.isoformat(),
+                    "error": str(exc),
+                    "correlation_id": getattr(request, "correlation_id", ""),
+                },
+            )
+            return error_response(
+                "service_unavailable",
+                "Unable to load events for this date range. Please try again.",
+            )
+
+        events_by_day = {
+            current.isoformat(): []
+            for current in _iter_dates(start_date, end_date)
+        }
+        for event in result.events:
+            events_by_day[event.event_date.isoformat()].append(event)
+
+        days = [
+            {
+                "date": date_key,
+                "events": EventSerializer(day_events, many=True).data,
+            }
+            for date_key, day_events in events_by_day.items()
+        ]
+
+        logger.info(
+            "range_read_success",
+            extra={
+                "operation": "range_read",
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat(),
+                "attempts": result.attempts,
+                "elapsed_ms": result.elapsed_ms,
+                "days": len(days),
+                "events": len(result.events),
+                "correlation_id": getattr(request, "correlation_id", ""),
+            },
+        )
+
+        payload = {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+            "days": DayEventsSerializer(days, many=True).data,
+        }
+        return Response(payload)
+
+
+def _iter_dates(start_date: dt.date, end_date: dt.date):
+    current = start_date
+    while current <= end_date:
+        yield current
+        current += dt.timedelta(days=1)
 
 
 class EventDetailView(APIView):

@@ -1,0 +1,149 @@
+openapi: 3.1.0
+info:
+  title: Calendar Views API Contract Addendum
+  version: 1.1.0
+  description: Feature-level API contract additions for multi-view calendar rendering.
+servers:
+  - url: http://localhost:8000/api/v1
+paths:
+  /events:
+    get:
+      summary: List events for a single day
+      parameters:
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Day event list response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventListResponse'
+        '400':
+          description: Missing or invalid date query parameter.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /events/range:
+    get:
+      summary: List events grouped by day across a date range
+      description: Supports week and month views by returning all events between start and end dates inclusive, with bounded timeout/retry handling for transient backend failures.
+      parameters:
+        - in: query
+          name: start_date
+          required: true
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: end_date
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Date-bucketed events for requested range.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventRangeResponse'
+        '400':
+          description: Missing/invalid range parameters or end before start.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Temporary range retrieval failure after bounded retries or timeout.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    Event:
+      type: object
+      required: [id, title, event_date, is_all_day, start_time, end_time, notes, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 200
+        event_date:
+          type: string
+          format: date
+        is_all_day:
+          type: boolean
+        start_time:
+          type: [string, 'null']
+          format: time
+        end_time:
+          type: [string, 'null']
+          format: time
+        notes:
+          type: string
+          maxLength: 2000
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    DayEvents:
+      type: object
+      required: [date, events]
+      properties:
+        date:
+          type: string
+          format: date
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+    EventListResponse:
+      type: object
+      required: [date, events]
+      properties:
+        date:
+          type: string
+          format: date
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+    EventRangeResponse:
+      type: object
+      required: [start_date, end_date, days]
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        days:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayEvents'
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          examples: [validation_error, service_unavailable, timeout]
+        message:
+          type: string
+          examples: ['Unable to load events for this date range. Please try again.']
+        details:
+          type: object
+          additionalProperties: true

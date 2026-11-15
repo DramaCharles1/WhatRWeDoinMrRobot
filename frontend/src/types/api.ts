@@ -21,6 +21,17 @@ export type EventListResponse = {
   events: EventDto[];
 };
 
+export type DayEvents = {
+  date: string;
+  events: EventDto[];
+};
+
+export type EventRangeResponse = {
+  start_date: string;
+  end_date: string;
+  days: DayEvents[];
+};
+
 export type EventWriteRequest = {
   title: string;
   event_date: string;

@@ -5,8 +5,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { CalendarPage } from "../../src/pages/CalendarPage";
 
-const { mockListEventsByDate, mockCreateEvent, mockUpdateEvent, mockDeleteEvent } = vi.hoisted(() => ({
+const { mockListEventsByDate, mockListEventsByRange, mockCreateEvent, mockUpdateEvent, mockDeleteEvent } = vi.hoisted(() => ({
   mockListEventsByDate: vi.fn(),
+  mockListEventsByRange: vi.fn(),
   mockCreateEvent: vi.fn(),
   mockUpdateEvent: vi.fn(),
   mockDeleteEvent: vi.fn(),
@@ -14,10 +15,17 @@ const { mockListEventsByDate, mockCreateEvent, mockUpdateEvent, mockDeleteEvent 
 
 vi.mock("../../src/services/tasksService", () => ({
   listEventsByDate: mockListEventsByDate,
+  listEventsByRange: mockListEventsByRange,
   createEvent: mockCreateEvent,
   updateEvent: mockUpdateEvent,
   deleteEvent: mockDeleteEvent,
 }));
+
+mockListEventsByRange.mockResolvedValue({
+  start_date: "2026-11-10",
+  end_date: "2026-11-16",
+  days: [{ date: "2026-11-14", events: [] }],
+});
 
 afterEach(() => {
   cleanup();
@@ -34,18 +42,41 @@ describe("calendar responsive behavior", () => {
       expect(screen.getByRole("button", { name: "Previous day" })).toBeTruthy();
     });
 
+    expect(screen.getByLabelText("calendar-page").className.includes("playful-theme")).toBe(true);
     expect(screen.getByRole("button", { name: "Next day" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Create" })).toBeTruthy();
   });
 
-  it("uses no horizontal overflow on 360px layout container", async () => {
+  it("renders themed surfaces while switching week month and day views", async () => {
     mockListEventsByDate.mockResolvedValue({ date: "2026-11-14", events: [] });
     window.innerWidth = 360;
 
     render(<CalendarPage />);
 
-    const root = await screen.findByLabelText("calendar-page");
-    expect(root.className.includes("calendar-page")).toBe(true);
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: "week-view" })).toBeTruthy();
+    });
+
+    expect(screen.getByRole("region", { name: "week-view" }).className.includes("motif-week")).toBe(true);
+    expect(screen.getAllByRole("button", { name: /add-event-/ }).length).toBeGreaterThan(0);
+
+    const monthButton = screen.getByRole("button", { name: "month-view-button" });
+    monthButton.click();
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: "month-view" })).toBeTruthy();
+    });
+
+    expect(screen.getByRole("region", { name: "month-view" }).className.includes("motif-month")).toBe(true);
+
+    const firstDaySelect = screen.getAllByRole("button", { name: /select-day-/ })[0];
+    firstDaySelect.click();
+    await waitFor(() => {
+      expect(screen.getByRole("region", { name: "day-view" })).toBeTruthy();
+    });
+
+    const dayView = screen.getByRole("region", { name: "day-view" });
+    expect(dayView.className.includes("motif-day")).toBe(true);
+    expect(screen.getAllByRole("button", { name: /add-event-/ }).length).toBeGreaterThan(0);
   });
 
   it("renders event list controls at desktop width", async () => {
