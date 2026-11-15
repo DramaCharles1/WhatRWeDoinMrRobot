@@ -109,15 +109,15 @@
 
 ### Tests for User Story 3
 
-- [ ] T038 [P] [US3] Add responsive and themed rendering checks across view modes in `frontend/tests/component/calendarResponsive.spec.tsx`
-- [ ] T039 [US3] Add accessibility checks for themed controls and focus states in `frontend/tests/component/taskAccessibility.spec.tsx`
+- [X] T038 [P] [US3] Add responsive and themed rendering checks across view modes in `frontend/tests/component/calendarResponsive.spec.tsx`
+- [X] T039 [US3] Add accessibility checks for themed controls and focus states in `frontend/tests/component/taskAccessibility.spec.tsx`
 
 ### Implementation for User Story 3
 
-- [ ] T040 [P] [US3] Define calendar theme tokens (palette, typography, motif accents) in `frontend/src/pages/CalendarPage.css`
-- [ ] T041 [US3] Apply themed layout and typography to page-level containers in `frontend/src/pages/CalendarPage.tsx` and `frontend/src/pages/CalendarPage.css`
-- [ ] T042 [US3] Apply themed motif accents in week/month/day surfaces in `frontend/src/components/CalendarWeekView.tsx`, `frontend/src/components/CalendarMonthView.tsx`, and `frontend/src/components/CalendarDayView.tsx`
-- [ ] T043 [US3] Ensure mobile and desktop readability/focus behavior for interactive controls in `frontend/src/pages/CalendarPage.css`
+- [X] T040 [P] [US3] Define calendar theme tokens (palette, typography, motif accents) in `frontend/src/pages/CalendarPage.css`
+- [X] T041 [US3] Apply themed layout and typography to page-level containers in `frontend/src/pages/CalendarPage.tsx` and `frontend/src/pages/CalendarPage.css`
+- [X] T042 [US3] Apply themed motif accents in week/month/day surfaces in `frontend/src/components/CalendarWeekView.tsx`, `frontend/src/components/CalendarMonthView.tsx`, and `frontend/src/components/CalendarDayView.tsx`
+- [X] T043 [US3] Ensure mobile and desktop readability/focus behavior for interactive controls in `frontend/src/pages/CalendarPage.css`
 
 **Checkpoint**: User Story 3 is independently testable and meets visual direction expectations.
 

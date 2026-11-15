@@ -10,7 +10,7 @@ type Props = {
 
 export function CalendarDayView({ selectedDate, events, onAddEvent, onOpenEvent }: Props) {
   return (
-    <section aria-label="day-view">
+    <section aria-label="day-view" className="day-view motif-day">
       <h3>Day view for {selectedDate}</h3>
       <button type="button" className="focus-ring" aria-label={`add-event-${selectedDate}`} onClick={onAddEvent}>
         Add event

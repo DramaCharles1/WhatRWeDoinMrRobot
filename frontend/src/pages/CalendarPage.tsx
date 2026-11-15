@@ -188,13 +188,16 @@ export function CalendarPage() {
   }, [closeDetails]);
 
   return (
-    <main className="calendar-page" aria-label="calendar-page">
-      <h1>SpeciaelFamily Calendar</h1>
+    <main className="calendar-page playful-theme" aria-label="calendar-page">
+      <header className="calendar-hero">
+        <p className="calendar-kicker">Family Rhythm Board</p>
+        <h1>SpeciaelFamily Calendar</h1>
+      </header>
       <CalendarViewSwitcher viewMode={viewMode} onChange={handleViewModeChange} />
       <DayNavigator selectedDate={selectedDate} onChange={handleNavigatorChange} />
-      <h2>{heading}</h2>
-      {error ? <p>{error}</p> : null}
-      {isLoading ? <p>Loading events...</p> : null}
+      <h2 className="calendar-subheading">{heading}</h2>
+      {error ? <p className="status-message status-error">{error}</p> : null}
+      {isLoading ? <p className="status-message">Loading events...</p> : null}
       {!isLoading && viewMode === "week" ? (
         <CalendarWeekView
           buckets={dayBuckets}

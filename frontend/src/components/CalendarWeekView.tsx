@@ -11,9 +11,9 @@ type Props = {
 
 export function CalendarWeekView({ buckets, selectedDate, onSelectDate, onAddEvent, onOpenEvent }: Props) {
   return (
-    <section aria-label="week-view" className="calendar-grid week-grid">
+    <section aria-label="week-view" className="calendar-grid week-grid motif-week">
       {buckets.map((bucket) => (
-        <article key={bucket.date} className="calendar-cell">
+        <article key={bucket.date} className="calendar-cell calendar-cell--week">
           <button
             className="focus-ring day-select"
             type="button"

@@ -11,9 +11,9 @@ type Props = {
 
 export function CalendarMonthView({ buckets, selectedDate, onSelectDate, onAddEvent, onOpenEvent }: Props) {
   return (
-    <section aria-label="month-view" className="calendar-grid month-grid">
+    <section aria-label="month-view" className="calendar-grid month-grid motif-month">
       {buckets.map((bucket) => (
-        <article key={bucket.date} className="calendar-cell">
+        <article key={bucket.date} className="calendar-cell calendar-cell--month">
           <button
             className="focus-ring day-select"
             type="button"

@@ -41,6 +41,7 @@ describe("task accessibility", () => {
     });
 
     expect(screen.getByLabelText("day-navigation")).toBeTruthy();
+    expect(screen.getByLabelText("view-switcher")).toBeTruthy();
     expect(screen.getByText("No events scheduled for this day.")).toBeTruthy();
     expect(screen.getByLabelText("title").id).toBe("event-title");
     expect(screen.getByLabelText("selected-day").id).toBe("selected-day-input");
@@ -73,6 +74,8 @@ describe("task accessibility", () => {
 
     const previousDay = screen.getByRole("button", { name: "Previous day" });
     const nextDay = screen.getByRole("button", { name: "Next day" });
+    const weekView = screen.getByRole("button", { name: "week-view-button" });
+    const monthView = screen.getByRole("button", { name: "month-view-button" });
     const createButton = screen.getByRole("button", { name: "Create" });
     const titleInput = screen.getByLabelText("title");
 
@@ -81,6 +84,12 @@ describe("task accessibility", () => {
 
     expect(previousDay.className.includes("focus-ring")).toBe(true);
     expect(nextDay.className.includes("focus-ring")).toBe(true);
+    expect(weekView.getAttribute("aria-pressed")).toBe("true");
+    monthView.click();
+    await waitFor(() => {
+      expect(monthView.getAttribute("aria-pressed")).toBe("true");
+    });
+    expect(monthView.className.includes("focus-ring")).toBe(true);
     expect(createButton.className.includes("focus-ring")).toBe(true);
     expect(titleInput.className.includes("focus-ring")).toBe(true);
   });
