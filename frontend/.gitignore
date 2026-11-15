@@ -4,3 +4,5 @@ playwright-report/
 
 # Local runtime caches
 playwright/.cache/
+
+node_modules.bak/
