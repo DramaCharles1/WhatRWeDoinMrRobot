@@ -119,3 +119,55 @@ def test_update_event_trims_title() -> None:
 
     assert response.status_code == 200
     assert response.json()["title"] == "Updated title"
+
+
+@pytest.mark.django_db
+def test_range_reads_reflect_mutations_across_lifecycle() -> None:
+    client = APIClient()
+    event_date = "2026-11-14"
+
+    created = client.post(
+        "/api/v1/events",
+        {
+            "title": "School pickup",
+            "event_date": event_date,
+            "is_all_day": True,
+            "notes": "before",
+        },
+        format="json",
+    )
+    assert created.status_code == 201
+    event_id = created.json()["id"]
+
+    range_response = client.get(
+        "/api/v1/events/range",
+        {"start_date": event_date, "end_date": event_date},
+    )
+    assert range_response.status_code == 200
+    assert any(item["title"] == "School pickup" for item in range_response.json()["days"][0]["events"])
+
+    updated = client.patch(
+        f"/api/v1/events/{event_id}",
+        {"title": "Updated pickup", "notes": "after"},
+        format="json",
+    )
+    assert updated.status_code == 200
+    assert updated.json()["title"] == "Updated pickup"
+
+    refreshed = client.get(
+        "/api/v1/events/range",
+        {"start_date": event_date, "end_date": event_date},
+    )
+    assert refreshed.status_code == 200
+    event_titles = [item["title"] for item in refreshed.json()["days"][0]["events"]]
+    assert "Updated pickup" in event_titles
+
+    deleted = client.delete(f"/api/v1/events/{event_id}")
+    assert deleted.status_code == 204
+
+    final_range = client.get(
+        "/api/v1/events/range",
+        {"start_date": event_date, "end_date": event_date},
+    )
+    assert final_range.status_code == 200
+    assert all(item["title"] != "Updated pickup" for item in final_range.json()["days"][0]["events"])

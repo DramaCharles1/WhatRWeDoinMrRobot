@@ -1,12 +1,14 @@
 import type { DayEventBucket } from "../services/calendarBuckets";
+import type { EventDto } from "../types/api";
 
 type Props = {
   buckets: DayEventBucket[];
   selectedDate: string;
   onSelectDate: (date: string) => void;
+  onOpenEvent: (event: EventDto) => void;
 };
 
-export function CalendarWeekView({ buckets, selectedDate, onSelectDate }: Props) {
+export function CalendarWeekView({ buckets, selectedDate, onSelectDate, onOpenEvent }: Props) {
   return (
     <section aria-label="week-view" className="calendar-grid week-grid">
       {buckets.map((bucket) => (
@@ -22,7 +24,11 @@ export function CalendarWeekView({ buckets, selectedDate, onSelectDate }: Props)
           </button>
           <ul>
             {bucket.events.slice(0, bucket.visibleCount).map((event) => (
-              <li key={event.id}>{event.title}</li>
+              <li key={event.id}>
+                <button type="button" className="focus-ring event-pill" onClick={() => onOpenEvent(event)}>
+                  {event.title}
+                </button>
+              </li>
             ))}
           </ul>
           {bucket.overflowCount > 0 ? <p>{bucket.overflowCount} more</p> : null}

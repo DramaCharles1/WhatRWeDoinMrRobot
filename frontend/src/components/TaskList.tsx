@@ -4,16 +4,26 @@ type Props = {
   tasks: EventDto[];
   onEdit: (task: EventDto) => void;
   onDelete: (taskId: string) => Promise<void>;
+  onOpenDetails: (task: EventDto) => void;
 };
 
-export function TaskList({ tasks, onEdit, onDelete }: Props) {
+export function TaskList({ tasks, onEdit, onDelete, onOpenDetails }: Props) {
   return (
     <ul className="event-list" aria-label="event-list">
       {tasks.map((task) => (
         <li key={task.id} className="event-list-item">
-          <strong>{task.title}</strong>
+          <button
+            type="button"
+            className="focus-ring"
+            aria-label={`view-event-${task.id}`}
+            onClick={() => onOpenDetails(task)}
+          >
+            <strong>{task.title}</strong>
+          </button>
           <p>
-            {task.is_all_day ? "All day" : `${task.start_time ?? ""} - ${task.end_time ?? ""}`}
+            {task.is_all_day
+              ? "All day"
+              : `${task.start_time ?? ""} - ${task.end_time ?? ""}`}
           </p>
           <button
             className="focus-ring"

@@ -32,11 +32,28 @@ test.describe("calendar multi-view journeys", () => {
     );
   });
 
-  test.fixme("create edit delete lifecycle from week view", async ({ page }) => {
+  test("create edit delete lifecycle from week view", async ({ page }) => {
     await page.goto("/");
 
-    // Phase 4 will wire create/edit/delete lifecycle assertions.
     await expect(page.getByText("SpeciaelFamily Calendar")).toBeVisible();
+    await expect(page.getByRole("region", { name: "week-view" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Create" }).click();
+    await page.getByLabel("title").fill("E2E Pickup");
+    await page.getByLabel("is-all-day").check();
+    await page.getByRole("button", { name: "Create" }).click();
+
+    await expect(page.getByText("E2E Pickup").first()).toBeVisible();
+    await page.getByRole("button", { name: /view-event-/ }).first().click();
+    await page.getByRole("button", { name: "Edit" }).click();
+    await page.getByLabel("title").fill("E2E Pickup Updated");
+    await page.getByRole("button", { name: "Save" }).click();
+
+    await expect(page.getByText("E2E Pickup Updated").first()).toBeVisible();
+    await page.getByRole("button", { name: /view-event-/ }).filter({ hasText: "E2E Pickup Updated" }).click();
+    await page.getByRole("button", { name: "Delete" }).click();
+
+    await expect(page.getByText("E2E Pickup Updated")).toHaveCount(0);
   });
 });
 

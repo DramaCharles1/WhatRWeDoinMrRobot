@@ -9,6 +9,7 @@ import { DayNavigator } from "../components/DayNavigator";
 import { TaskForm } from "../components/TaskForm";
 import { TaskList } from "../components/TaskList";
 import { TaskListEmptyState } from "../components/TaskListEmptyState";
+import { EventDetailsPanel } from "../components/EventDetailsPanel";
 import { buildDayBuckets, type DayEventBucket } from "../services/calendarBuckets";
 import { getRangeForView, type CalendarViewMode } from "../services/calendarDateRanges";
 import {
@@ -31,6 +32,7 @@ export function CalendarPage() {
   const [dayBuckets, setDayBuckets] = useState<DayEventBucket[]>([]);
   const [tasks, setTasks] = useState<EventDto[]>([]);
   const [editingTask, setEditingTask] = useState<EventDto | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventDto | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -131,6 +133,35 @@ export function CalendarPage() {
     setViewMode("day");
   }, []);
 
+  const handleOpenDetails = useCallback((task: EventDto) => {
+    setSelectedEvent(task);
+  }, []);
+
+  const handleEditFromDetails = useCallback((task: EventDto) => {
+    setSelectedEvent(null);
+    setEditingTask(task);
+  }, []);
+
+  const handleDeleteFromDetails = useCallback(
+    async (taskId: string) => {
+      try {
+        await deleteEvent(taskId);
+        setSelectedEvent(null);
+        await loadCalendarData();
+      } catch (err) {
+        const apiError = err as ApiError;
+        setError(apiError.message);
+        await loadCalendarData(selectedDate, visibleRange.startDate, visibleRange.endDate, viewMode, false);
+      }
+    },
+    [loadCalendarData, selectedDate, visibleRange.startDate, visibleRange.endDate, viewMode],
+  );
+
+  const handleEditTask = useCallback((task: EventDto) => {
+    setSelectedEvent(null);
+    setEditingTask(task);
+  }, []);
+
   return (
     <main className="calendar-page" aria-label="calendar-page">
       <h1>SpeciaelFamily Calendar</h1>
@@ -144,6 +175,7 @@ export function CalendarPage() {
           buckets={dayBuckets}
           selectedDate={selectedDate}
           onSelectDate={openDayForDate}
+          onOpenEvent={handleOpenDetails}
         />
       ) : null}
       {!isLoading && viewMode === "month" ? (
@@ -151,10 +183,16 @@ export function CalendarPage() {
           buckets={dayBuckets}
           selectedDate={selectedDate}
           onSelectDate={openDayForDate}
+          onOpenEvent={handleOpenDetails}
         />
       ) : null}
       {!isLoading && viewMode === "day" ? (
-        <CalendarDayView selectedDate={selectedDate} events={tasks} onAddEvent={handleAddEvent} />
+        <CalendarDayView
+          selectedDate={selectedDate}
+          events={tasks}
+          onAddEvent={handleAddEvent}
+          onOpenEvent={handleOpenDetails}
+        />
       ) : null}
       <TaskForm
         selectedDate={selectedDate}
@@ -180,7 +218,8 @@ export function CalendarPage() {
       {!isLoading && tasks.length > 0 ? (
         <TaskList
           tasks={tasks}
-          onEdit={(task) => setEditingTask(task)}
+          onEdit={handleEditTask}
+          onOpenDetails={handleOpenDetails}
           onDelete={async (taskId) => {
             try {
               await deleteEvent(taskId);
@@ -193,6 +232,12 @@ export function CalendarPage() {
           }}
         />
       ) : null}
+      <EventDetailsPanel
+        event={selectedEvent}
+        onClose={() => setSelectedEvent(null)}
+        onEdit={handleEditFromDetails}
+        onDelete={handleDeleteFromDetails}
+      />
     </main>
   );
 }
